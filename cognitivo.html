@@ -3406,8 +3406,25 @@ function g9Cargar() {
   document.getElementById('g9-pasos').innerHTML=pasosHtml;
 }
 function g9Elegir(btn) {
-  if(btn.style.opacity==='0.3') return;
-  G9.elegidos.push(btn.dataset.n);
+  var n = btn.dataset.n;
+  var idx = G9.elegidos.indexOf(n);
+  if(idx > -1) {
+    // Ya está seleccionado → desseleccionar
+    G9.elegidos.splice(idx, 1);
+    btn.style.opacity='1';
+    btn.style.pointerEvents='auto';
+    // Limpiar slot correspondiente
+    var slots=document.getElementById('g9-slots').children;
+    if(slots[idx]) slots[idx].textContent='';
+    // Mover elementos después del slot eliminado
+    for(var i=idx; i<G9.elegidos.length; i++) {
+      var paso=G9_DATA[G9.nivel].p.find(function(x){return x.n===G9.elegidos[i];});
+      if(slots[i]) slots[i].textContent=paso?paso.e:'';
+    }
+    return;
+  }
+  // No está seleccionado → seleccionar
+  G9.elegidos.push(n);
   btn.style.opacity='0.3';
   btn.style.pointerEvents='none';
   // Update slot
@@ -3473,14 +3490,21 @@ var G10_ITEMS = [
 ];
 var G10 = {ok:0, err:0, cambios:0, regla:'color', trial:0, correcto:'', activo:false,
   timerInterval:null, timerSec:10, timerMax:10,
-  etapaOk:0, etapaNeed:5, nOpciones:4
+  etapaOk:0, etapaNeed:5, nOpciones:4,
+  item:null, nivel:1
 };
 var G10_FORMAS_EXTRA = ['Triángulo','Diamante','Estrella','Hexágono'];
 var G10_COLORES_EXTRA = ['Rojo','Azul','Amarillo','Verde','Morado','Naranja'];
+var G10_ITEMS = [
+  {e:'🔴',color:'Rojo',  forma:'Círculo'},  {e:'🔵',color:'Azul',  forma:'Círculo'},
+  {e:'🟡',color:'Amarillo',forma:'Círculo'},{e:'🟢',color:'Verde', forma:'Círculo'},
+  {e:'🟥',color:'Rojo',  forma:'Cuadrado'}, {e:'🟦',color:'Azul',  forma:'Cuadrado'},
+  {e:'🟨',color:'Amarillo',forma:'Cuadrado'},{e:'🟩',color:'Verde', forma:'Cuadrado'},
+];
 function g10Init() {
   if(!requireStudent()) return;
   clearInterval(G10.timerInterval);
-  G10.ok=0; G10.err=0; G10.cambios=0; G10.regla='color'; G10.trial=0; G10.activo=true; G10.timerMax=10; G10.etapaOk=0; G10.nOpciones=4;
+  G10.ok=0; G10.err=0; G10.cambios=0; G10.regla='color'; G10.trial=0; G10.activo=true; G10.timerMax=10; G10.etapaOk=0; G10.nOpciones=4; G10.nivel=1;
   document.getElementById('g10-ok').textContent='0';
   document.getElementById('g10-err').textContent='0';
   document.getElementById('g10-cambios').textContent='0';
@@ -3506,17 +3530,64 @@ function g10Siguiente() {
   document.getElementById('g10-figura').textContent = item.e;
   var todosColores = ['Rojo','Azul','Amarillo','Verde','Morado','Naranja'];
   var todasFormas  = ['Círculo','Cuadrado','Triángulo','Diamante','Estrella','Hexágono'];
-  var n = Math.min(G10.nOpciones, G10.regla==='color' ? todosColores.length : todasFormas.length);
-  var opciones = G10.regla==='color'
-    ? todosColores.slice(0, n).sort(function(){return Math.random()-0.5;})
-    : todasFormas.slice(0, n).sort(function(){return Math.random()-0.5;});
-  // Make sure correct answer is in options
+  
   G10.correcto = G10.regla==='color' ? item.color : item.forma;
-  if(opciones.indexOf(G10.correcto) === -1) opciones[0] = G10.correcto;
+  var opciones = [];
+  
+  // NIVEL 1-2: Opciones simples (colores O formas)
+  if(G10.nivel <= 2) {
+    var n = Math.min(G10.nOpciones, 6);
+    var mitad = Math.floor(n / 2);
+    var coloresParaOpciones = todosColores.slice(0, n).sort(function(){return Math.random()-0.5;});
+    for(var i=0; i<mitad && coloresParaOpciones.length > 0; i++) {
+      opciones.push(coloresParaOpciones.pop());
+    }
+    var formasParaOpciones = todasFormas.slice(0, n).sort(function(){return Math.random()-0.5;});
+    for(var i=0; i<n-mitad && formasParaOpciones.length > 0; i++) {
+      opciones.push(formasParaOpciones.pop());
+    }
+  }
+  // NIVEL 3+: Opciones complejas (variaciones de la figura actual)
+  else {
+    var n = Math.min(G10.nOpciones, 6);
+    if(G10.regla==='color') {
+      // Respuesta: color correcto
+      opciones.push(G10.correcto);
+      // Distractores: MISMA FORMA, colores distintos
+      var otrosColores = todosColores.filter(function(c){return c!==G10.correcto;});
+      for(var i=0; i<n-1 && otrosColores.length>0; i++) {
+        opciones.push(otrosColores.pop());
+      }
+    } else {
+      // Respuesta: forma correcta
+      opciones.push(G10.correcto);
+      // Distractores: MISMO COLOR, formas distintas
+      var otrasFormas = todasFormas.filter(function(f){return f!==G10.correcto;});
+      for(var i=0; i<n-1 && otrasFormas.length>0; i++) {
+        opciones.push(otrasFormas.pop());
+      }
+    }
+  }
+  
+  // Asegurar respuesta correcta está en opciones
+  if(opciones.indexOf(G10.correcto) === -1) {
+    opciones[0] = G10.correcto;
+  }
+  
+  // Mezclar finalmente
   opciones = opciones.sort(function(){return Math.random()-0.5;});
+  var colorEmojis = {'Rojo':'🔴','Azul':'🔵','Amarillo':'🟡','Verde':'🟢','Morado':'🟣','Naranja':'🟠'};
+  var formaEmojis = {'Círculo':'⭕','Cuadrado':'⬜','Triángulo':'🔺','Diamante':'🔷','Estrella':'⭐','Hexágono':'⬡'};
+  var todosColores = ['Rojo','Azul','Amarillo','Verde','Morado','Naranja'];
+  var todasFormas  = ['Círculo','Cuadrado','Triángulo','Diamante','Estrella','Hexágono'];
+  
   var html='';
-  opciones.sort(function(){return Math.random()-0.5;}).forEach(function(op){
-    html+='<button style="padding:18px;border-radius:16px;border:2.5px solid var(--border);background:var(--surface2);font-size:1rem;font-weight:800;cursor:pointer;color:var(--texto);transition:all 0.15s;font-family:Nunito,sans-serif;" data-op="'+op+'" onclick="g10Resp(this.dataset.op)">'+op+'</button>';
+  opciones.forEach(function(op){
+    var esColor = todosColores.indexOf(op) !== -1;
+    var esForma = todasFormas.indexOf(op) !== -1;
+    var emoji = esColor ? (colorEmojis[op]||'●') : (formaEmojis[op]||'◻️');
+    var tipo = esColor ? '<span style="font-size:0.7rem;color:var(--texto2);">[COLOR]</span>' : '<span style="font-size:0.7rem;color:var(--texto2);">[FORMA]</span>';
+    html+='<button style="padding:14px 10px;border-radius:16px;border:2.5px solid var(--border);background:var(--surface2);font-size:0.9rem;font-weight:800;cursor:pointer;color:var(--texto);transition:all 0.15s;font-family:Nunito,sans-serif;display:flex;flex-direction:column;align-items:center;gap:4px;" data-op="'+op+'" onclick="g10Resp(this.dataset.op)"><span style="font-size:1.6rem;">'+emoji+'</span><span>'+op+'</span>'+tipo+'</button>';
   });
   document.getElementById('g10-opts').innerHTML=html;
   soundMostrar(0);
@@ -3565,9 +3636,10 @@ function g10Resp(resp) {
         celebrarPasoOk('¡Etapa superada!', 'Ahora tienes ' + G10.timerMax + ' segundos. ¡Más rápido!');
         soundMostrar(3);
       } else {
-        G10.nOpciones = Math.min(G10.nOpciones + 1, Math.max(G10_FORMAS_EXTRA.length, G10_COLORES_EXTRA.length));
+        G10.nivel++;
+        G10.nOpciones = Math.min(G10.nOpciones + 1, 6);
         G10.timerMax = 10;
-        celebrarLogro('¡Nivel máximo de velocidad!', '¡' + currentStudent.split(' ')[0] + ' ahora clasifica más opciones desde 10 segundos!');
+        celebrarLogro('¡Nivel ' + G10.nivel + '!', '¡' + currentStudent.split(' ')[0] + ' ahora enfrenta variaciones más complejas desde 10 segundos!');
         soundMostrar(4);
       }
     }
