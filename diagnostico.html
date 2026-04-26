@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Diagnóstico</title>
+<style>body{font-family:monospace;background:#0F172A;color:#F1F5F9;padding:2rem;}
+.key{color:#38BDF8;} .val{color:#4ADE80;} .empty{color:#F87171;}</style>
+</head>
+<body>
+<h2>🔍 Diagnóstico de datos guardados</h2>
+<p style="color:#94A3B8;">Todos los datos en localStorage de esta app:</p>
+<div id="out"></div>
+<script>
+var out = document.getElementById('out');
+var html = '';
+var keys = [];
+for(var i=0;i<localStorage.length;i++) keys.push(localStorage.key(i));
+keys.sort();
+
+if(keys.length === 0) {
+  html = '<p class="empty">⚠️ localStorage está VACÍO en este dominio.</p>';
+  html += '<p style="color:#FB923C;">Esto significa que los datos guardados están en otro dominio/ruta.</p>';
+} else {
+  keys.forEach(function(k) {
+    var v = localStorage.getItem(k);
+    html += '<div style="margin:8px 0;padding:8px;background:#1E293B;border-radius:6px;">';
+    html += '<span class="key">' + k + '</span>: ';
+    try {
+      var parsed = JSON.parse(v);
+      var keys2 = Object.keys(parsed);
+      html += '<span class="val">{' + keys2.slice(0,5).join(', ') + (keys2.length>5?'...':'') + '}</span>';
+    } catch(e) {
+      html += '<span class="val">' + String(v).slice(0,80) + '</span>';
+    }
+    html += '</div>';
+  });
+}
+
+// Buscar específicamente claves de progreso
+html += '<hr style="border-color:#334155;margin:1rem 0;">';
+html += '<h3 style="color:#A78BFA;">Claves mem_prog_*:</h3>';
+var progKeys = keys.filter(function(k){ return k.startsWith('mem_prog_'); });
+if(progKeys.length === 0) {
+  html += '<p class="empty">No se encontraron datos de progreso (mem_prog_*)</p>';
+} else {
+  progKeys.forEach(function(k) {
+    html += '<p class="val">✅ ' + k + '</p>';
+  });
+}
+
+html += '<h3 style="color:#A78BFA;">currentStudent:</h3>';
+html += '<p>' + (localStorage.getItem("currentStudent") || "NO EXISTE") + '</p>';
+
+out.innerHTML = html;
+</script>
+</body></html>
