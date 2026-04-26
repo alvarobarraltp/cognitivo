@@ -738,28 +738,28 @@
 <body>
 
 <!-- ═══════ PANTALLA DE LOGIN ═══════ -->
-<div id="login-screen" style="display:block;">
-  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,#0F172A 0%,#1a2332 50%,#0F172A 100%);">
-    <div style="width:100%;max-width:400px;background:#1E293B;border:1.5px solid #334155;border-radius:20px;padding:2.5rem 2rem;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
-      <div style="text-align:center;margin-bottom:2rem;">
-        <div style="width:90px;height:90px;margin:0 auto 1rem;background:linear-gradient(135deg,#38BDF8,#A78BFA);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:3rem;box-shadow:0 10px 30px rgba(56,189,248,0.3);">🧠</div>
-        <h1 style="font-family:Fredoka One,cursive;font-size:1.8rem;background:linear-gradient(135deg,#38BDF8,#A78BFA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.3rem;">Entrenamiento Cognitivo</h1>
-        <p style="font-size:0.85rem;color:#94A3B8;">Desarrollo de Funciones Ejecutivas y Memoria</p>
-        <p style="font-size:0.8rem;color:#64748B;margin-top:0.8rem;padding-top:0.8rem;border-top:1px solid #334155;">Prof. Álvaro Barra Sáez</p>
-      </div>
-      <div id="login-err" style="display:none;background:rgba(248,113,113,0.1);border:1px solid #F87171;color:#FCA5A5;padding:12px;border-radius:10px;margin-bottom:1rem;font-size:0.9rem;"></div>
-      <div style="margin-bottom:1rem;">
-        <label style="display:block;font-size:0.85rem;font-weight:700;color:#F1F5F9;margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.5px;">RUT (ID)</label>
-        <input id="login-rut" type="text" placeholder="Ej: 23483893-8" autocomplete="off"
-          style="width:100%;padding:12px 16px;background:#273449;border:1.5px solid #334155;border-radius:12px;color:#F1F5F9;font-size:1rem;font-family:Nunito,sans-serif;box-sizing:border-box;">
-      </div>
-      <div style="margin-bottom:1.5rem;">
-        <label style="display:block;font-size:0.85rem;font-weight:700;color:#F1F5F9;margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.5px;">Contraseña</label>
-        <input id="login-pass" type="password" placeholder="Tu RUT" autocomplete="off"
-          style="width:100%;padding:12px 16px;background:#273449;border:1.5px solid #334155;border-radius:12px;color:#F1F5F9;font-size:1rem;font-family:Nunito,sans-serif;box-sizing:border-box;">
-      </div>
-      <button onclick="loginIngresar()" style="width:100%;padding:14px;background:linear-gradient(135deg,#38BDF8,#A78BFA);border:none;border-radius:12px;color:white;font-size:1rem;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif;letter-spacing:0.5px;">Ingresar</button>
+<div id="login-screen" style="display:flex;position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;background:linear-gradient(135deg,#0F172A 0%,#1a2332 50%,#0F172A 100%);align-items:center;justify-content:center;padding:1rem;box-sizing:border-box;">
+  <div style="width:100%;max-width:400px;background:#1E293B;border:1.5px solid #334155;border-radius:20px;padding:2.5rem 2rem;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+    <div style="text-align:center;margin-bottom:2rem;">
+      <div style="width:90px;height:90px;margin:0 auto 1rem;background:linear-gradient(135deg,#38BDF8,#A78BFA);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:3.5rem;box-shadow:0 10px 30px rgba(56,189,248,0.3);">🧠</div>
+      <h1 style="font-family:'Fredoka One',cursive;font-size:1.8rem;background:linear-gradient(135deg,#38BDF8,#A78BFA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.3rem;">Entrenamiento Cognitivo</h1>
+      <p style="font-size:0.85rem;color:#94A3B8;">Funciones Ejecutivas y Memoria · 1° Medio</p>
+      <p style="font-size:0.78rem;color:#64748B;margin-top:0.8rem;padding-top:0.8rem;border-top:1px solid #334155;">Prof. Álvaro Barra Sáez</p>
     </div>
+    <div id="login-err" style="display:none;background:rgba(248,113,113,0.1);border:1px solid #F87171;color:#FCA5A5;padding:12px;border-radius:10px;margin-bottom:1rem;font-size:0.9rem;text-align:center;"></div>
+    <div style="margin-bottom:1rem;">
+      <label style="display:block;font-size:0.82rem;font-weight:700;color:#F1F5F9;margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.5px;">RUT / Usuario</label>
+      <input id="login-rut" type="text" placeholder="Ej: 23483893-8" autocomplete="off"
+        style="width:100%;padding:12px 16px;background:#273449;border:1.5px solid #334155;border-radius:12px;color:#F1F5F9;font-size:1rem;font-family:Nunito,sans-serif;box-sizing:border-box;outline:none;">
+    </div>
+    <div style="margin-bottom:1.5rem;">
+      <label style="display:block;font-size:0.82rem;font-weight:700;color:#F1F5F9;margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.5px;">Contraseña</label>
+      <input id="login-pass" type="password" placeholder="Tu contraseña" autocomplete="off"
+        style="width:100%;padding:12px 16px;background:#273449;border:1.5px solid #334155;border-radius:12px;color:#F1F5F9;font-size:1rem;font-family:Nunito,sans-serif;box-sizing:border-box;outline:none;">
+    </div>
+    <button onclick="loginIngresar()" style="width:100%;padding:14px;background:linear-gradient(135deg,#38BDF8,#A78BFA);border:none;border-radius:12px;color:white;font-size:1rem;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif;letter-spacing:0.5px;">
+      Ingresar →
+    </button>
   </div>
 </div>
 
@@ -825,13 +825,9 @@
 
 <nav class="sidebar">
 
-  <button class="tab active" id="tab-inicio" onclick="showGame(14)" style="background:linear-gradient(135deg,rgba(56,189,248,0.15),rgba(167,139,250,0.15));border-color:var(--azul);margin-bottom:4px;">
+  <button class="tab active" id="tab-inicio" onclick="showGame(14)" style="background:linear-gradient(135deg,rgba(56,189,248,0.15),rgba(167,139,250,0.15));border-color:var(--azul);margin-bottom:6px;">
     <span class="tab-icon">🏠</span>
     <span class="tab-text">Mi inicio</span>
-  </button>
-  <button class="tab" id="tab-avance-personal" onclick="showGame(15)" style="margin-bottom:6px;">
-    <span class="tab-icon">📊</span>
-    <span class="tab-text">Mi Avance</span>
   </button>
   <div class="sidebar-divider"></div>
   <div class="sidebar-label">🎯 Atención</div>
@@ -1233,35 +1229,53 @@
   <!-- ===== PANEL 14: INICIO PERSONAL ===== -->
   <div class="game-panel" id="panel14">
     <div class="card">
+
       <!-- Cabecera: avatar + nombre -->
-      <div style="display:flex;align-items:center;gap:1.5rem;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1.5px solid var(--border);">
-        <div id="p14-avatar" style="flex-shrink:0;width:90px;height:90px;border-radius:50%;background:var(--surface2);border:2px solid var(--azul);display:flex;align-items:center;justify-content:center;overflow:hidden;"></div>
-        <div>
-          <div id="p14-nombre" style="font-family:'Fredoka One',cursive;font-size:1.6rem;color:var(--azul);line-height:1.2;"></div>
-          <div id="p14-sub" style="font-size:0.85rem;color:var(--texto2);margin-top:4px;">Liceo · 1° Medio · Programa de Entrenamiento Cognitivo</div>
+      <div style="display:flex;align-items:center;gap:1.5rem;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1.5px solid var(--border);">
+        <div id="p14-avatar" style="flex-shrink:0;width:80px;height:80px;border-radius:50%;background:var(--surface2);border:3px solid var(--azul);display:flex;align-items:center;justify-content:center;font-size:2.8rem;"></div>
+        <div style="flex:1;">
+          <div id="p14-nombre" style="font-family:'Fredoka One',cursive;font-size:1.5rem;color:var(--azul);line-height:1.2;"></div>
+          <div style="font-size:0.8rem;color:var(--texto2);margin-top:2px;">Liceo · 1° Medio · Programa de Entrenamiento Cognitivo</div>
+          <div id="p14-ultima" style="font-size:0.75rem;color:var(--texto2);margin-top:4px;"></div>
         </div>
       </div>
+
       <!-- Tarjetas resumen -->
       <div id="p14-resumen" style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.8rem;margin-bottom:1.5rem;"></div>
+
+      <!-- Desafío del día -->
+      <div id="p14-desafio" style="background:linear-gradient(135deg,rgba(56,189,248,0.1),rgba(167,139,250,0.1));border:1.5px solid var(--azul);border-radius:14px;padding:1.2rem;margin-bottom:1.5rem;">
+        <div style="font-weight:800;color:var(--azul);margin-bottom:0.8rem;font-size:1rem;">🎯 Desafío del día</div>
+        <div id="p14-desafio-contenido"></div>
+      </div>
+
+      <!-- Progresión por área -->
+      <div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:14px;padding:1rem;margin-bottom:1.5rem;">
+        <div style="font-weight:800;color:var(--texto);margin-bottom:1rem;font-size:1rem;">📈 Mi Progresión</div>
+        <div id="p14-progresion"></div>
+      </div>
+
       <!-- Tabla de avance -->
       <div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:14px;padding:1rem;margin-bottom:1.5rem;">
-        <div style="font-weight:800;color:var(--texto);margin-bottom:0.8rem;">📊 Mi Avance por Ejercicio</div>
+        <div style="font-weight:800;color:var(--texto);margin-bottom:0.8rem;font-size:1rem;">📊 Detalle por ejercicio</div>
         <div id="p14-tabla" style="overflow-x:auto;"></div>
       </div>
-      <!-- Botón comenzar -->
-      <button class="btn btn-primary" onclick="showGame(2)" style="font-size:1rem;padding:0.9rem 2rem;">▶ Comenzar ejercicios</button>
-    </div>
-  </div>
 
-  <!-- ===== PANEL 15: MI AVANCE PERSONAL ===== -->
-  <div class="game-panel" id="panel15">
+      <!-- Botón comenzar -->
+      <button id="p14-btn-desafio" class="btn btn-primary" style="font-size:1rem;padding:0.9rem 2rem;width:100%;">▶ Ir al desafío del día</button>
+    </div>
   </div>
 
 </div><!-- .main -->
 
   <button onclick="logoutApp()" style="position:fixed;top:1rem;right:1rem;padding:8px 14px;background:rgba(248,113,113,0.1);border:1.5px solid #F87171;color:#FCA5A5;border-radius:8px;font-size:0.85rem;font-weight:700;cursor:pointer;transition:all 0.3s;z-index:1000;">🚪 Salir</button>
   <script>
-    function logout() { logoutApp(); }
+    function logout() {
+      if(confirm('¿Estás seguro que deseas salir?')) {
+        localStorage.removeItem('currentStudent');
+        window.location.href = './index.html';
+      }
+    }
   </script>
 
 </div><!-- .app-body -->
@@ -1277,7 +1291,7 @@
   // Todos los nombres que se hayan usado en versiones anteriores
   var NOMBRES_VIEJOS = {
     'Miguel Pérez': [
-      'Miguel Pérez Lagos', 'Miguel Pérez', 'Miguel Pérez Lagos'
+      'Miguel Pérez Lagos', 'Miguel Pérez', 'Miguel'
     ],
     'Catalina Vergara': [
       'Catalina Anais Vergara Cárcamo', 'Catalina Vergara', 'Catalina'
@@ -1814,7 +1828,7 @@ function showInforme(student) {
 var ryrInitDone = false;
 function showGame(n) {
   // Hide ALL panels with inline style (overrides any CSS)
-  [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15].forEach(function(id) {
+  [1,2,3,4,5,6,7,8,9,10,11,12,13,14].forEach(function(id) {
     var el = document.getElementById('panel'+id);
     if(el) el.style.display = 'none';
   });
@@ -1837,61 +1851,6 @@ function showGame(n) {
   if(n===12) { try{ adminRenderStats(); }catch(e){} }
   if(n===13) { try{ adminRenderList(); }catch(e){} }
   if(n===14) { try{ renderPanelInicio(currentStudent||null); }catch(e){ console.error('renderPanelInicio error:',e); } }
-  if(n===15) {
-    try {
-      // Forzar render directo
-      var el15 = document.getElementById('panel15');
-      if(el15) {
-        el15.style.display = 'block';
-        // Leer datos directamente
-        var _stu = currentStudent || (STUDENT_MAP[localStorage.getItem('currentStudent')||''] || localStorage.getItem('currentStudent'));
-        var _prog = {};
-        try { _prog = JSON.parse(localStorage.getItem('mem_prog_'+_stu)||'{}'); } catch(e2){}
-        
-        var _html = '<div class="card">';
-        _html += '<div style="font-family:Fredoka One,cursive;font-size:1.4rem;color:var(--azul);margin-bottom:1rem;">📊 Mi Avance — '+(_stu||'?')+'</div>';
-        
-        // Leer cada juego directamente con AMBOS formatos
-        var _juegos = [
-          {n:'🎨 Secuencia colores',   k:'g1',   sub:'pts',  ex:'nivel'},
-          {n:'🔢 Recuerda números',     k:'g2',   sub:'pts',  ex:'digs'},
-          {n:'🖼️ Orden imágenes',       k:'g3',   sub:'pts',  ex:'rnd'},
-          {n:'🃏 Encuentra pares',      k:'g4',   sub:'pts',  ex:'games'},
-          {n:'🔗 Cadena numérica',      k:'g5',   sub:'pts',  ex:'niv'},
-          {n:'🧩 Recuerda y Reconstruye',k:'ryr', sub:'pts',  ex:'nivel'},
-          {n:'🛑 Control Inhibitorio',  k:'g8ok', sub:null,   ex:null},
-          {n:'📋 Planeamiento',          k:'g9ok', sub:null,   ex:null},
-          {n:'🔀 Flexibilidad Cognitiva',k:'g10ok',sub:null,  ex:null},
-          {n:'↔️ Atención Alternada',   k:'g11ok',sub:null,   ex:null}
-        ];
-        
-        _html += '<table style="width:100%;border-collapse:collapse;">';
-        _html += '<tr style="border-bottom:2px solid var(--border);"><th style="text-align:left;padding:8px;color:var(--texto2);">Ejercicio</th><th style="text-align:center;padding:8px;color:var(--texto2);">Pts/Aciertos</th><th style="text-align:center;padding:8px;color:var(--texto2);">Nivel/Extra</th></tr>';
-        
-        _juegos.forEach(function(j) {
-          var pts = 0, extra = '—';
-          if(j.sub === null) {
-            pts = _prog[j.k] || 0;
-          } else {
-            var obj = _prog[j.k];
-            if(obj) {
-              pts = obj[j.sub] || 0;
-              if(j.ex && obj[j.ex]) extra = obj[j.ex];
-            }
-          }
-          var color = pts > 0 ? 'var(--verde)' : 'var(--texto2)';
-          _html += '<tr style="border-bottom:1px solid var(--border);">';
-          _html += '<td style="padding:8px;">'+j.n+'</td>';
-          _html += '<td style="text-align:center;padding:8px;font-weight:800;color:'+color+';">'+(pts||'—')+'</td>';
-          _html += '<td style="text-align:center;padding:8px;color:var(--texto2);">'+extra+'</td>';
-          _html += '</tr>';
-        });
-        
-        _html += '</table></div>';
-        el15.innerHTML = _html;
-      }
-    } catch(e){ console.error('panel15 error:',e); }
-  }
   if(n>=1 && n<=5 && currentStudent) {
     try{
       var prog = getProgress(currentStudent);
@@ -1901,7 +1860,7 @@ function showGame(n) {
   }
 }
 function showGameSilent(n) {
-  [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15].forEach(function(id) {
+  [1,2,3,4,5,6,7,8,9,10,11].forEach(function(id) {
     var el = document.getElementById('panel'+id);
     if(el) el.style.display = (id===n) ? 'block' : 'none';
   });
@@ -4092,119 +4051,8 @@ var ADMIN_GAME_NAMES = {
 
 
 
-
-
-
-// ═══════════════════════════════════════════════════════════════
-// SISTEMA DE LOGIN INTEGRADO
-// ═══════════════════════════════════════════════════════════════
-var USUARIOS_LOGIN = {
-  '23483893-8': { nombre: 'Miguel Pérez Lagos',            password: '23483893-8' },
-  '23420823-3': { nombre: 'Catalina Anais Vergara Cárcamo',password: '23420823-3' },
-  '23959701-7': { nombre: 'Leonel Hernán Pradines Flández',password: '23959701-7' },
-  'Administrador': { nombre: 'Administrador',              password: '77633333'   }
-};
-
-function loginIngresar() {
-  var rut  = document.getElementById('login-rut').value.trim();
-  var pass = document.getElementById('login-pass').value.trim();
-  var err  = document.getElementById('login-err');
-  err.style.display = 'none';
-  if(!rut || !pass) { err.textContent='⚠️ Completa RUT y contraseña'; err.style.display='block'; return; }
-  if(USUARIOS_LOGIN[rut] && USUARIOS_LOGIN[rut].password === pass) {
-    localStorage.setItem('currentStudent', USUARIOS_LOGIN[rut].nombre);
-    localStorage.setItem('jsonbin_api_key', '$2a$10$aN/wdIxgIPOfUKLfmp6oHuZuelJlkbFPWswWLQRF/kM0EwBCiy5Gy');
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app-screen').style.display   = 'block';
-    initApp();
-  } else {
-    err.textContent = '❌ RUT o contraseña incorrectos';
-    err.style.display = 'block';
-    document.getElementById('login-pass').value = '';
-  }
-}
-
-function logoutApp() {
-  if(confirm('¿Salir de la sesión?')) {
-    localStorage.removeItem('currentStudent');
-    document.getElementById('app-screen').style.display   = 'none';
-    document.getElementById('login-screen').style.display = 'block';
-    document.getElementById('login-rut').value  = '';
-    document.getElementById('login-pass').value = '';
-  }
-}
-
-function initApp() {
-  // Re-ejecutar la lógica de onload
-  appOnload();
-}
-
-window.onload=function(){
-  // Siempre mostrar login primero
-  document.getElementById('app-screen').style.display   = 'none';
-  document.getElementById('login-screen').style.display = 'block';
-  // Enter key en password
-  var passEl = document.getElementById('login-pass');
-  if(passEl) passEl.addEventListener('keypress', function(e){ if(e.key==='Enter') loginIngresar(); });
-  var rutEl = document.getElementById('login-rut');
-  if(rutEl) rutEl.addEventListener('keypress', function(e){ if(e.key==='Enter') loginIngresar(); });
-}
-
-function appOnload(){
-  // Releer desde localStorage en el momento actual (no al cargar la página)
-  _loginName = localStorage.getItem('currentStudent') || '';
-  currentStudent = STUDENT_MAP[_loginName] || _loginName;
-  
-  if(!_loginName) { logoutApp(); return; }
-
-  // Ocultar todos los paneles
-  [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15].forEach(function(id){
-    var el = document.getElementById('panel'+id);
-    if(el) el.style.display = 'none';
-  });
-
-  // Determinar si es admin o estudiante
-  var mappedStudent = STUDENT_MAP[_loginName] || _loginName;
-  var isAdmin = mappedStudent === 'Administrador';
-
-  // Mostrar barra correcta
-  if(isAdmin) {
-    var barAdmin = document.getElementById('bar-admin');
-    if(barAdmin) barAdmin.style.display = 'block';
-    var barStu = document.getElementById('bar-student');
-    if(barStu) barStu.style.display = 'none';
-  } else {
-    var barAdmin2 = document.getElementById('bar-admin');
-    if(barAdmin2) barAdmin2.style.display = 'none';
-    var barStu2 = document.getElementById('bar-student');
-    if(barStu2) barStu2.style.display = 'flex';
-    var avatares = {'Miguel Pérez':'🐶','Catalina Vergara':'🐱','Leonel Pradines':'🧑‍🎓'};
-    var avEl = document.getElementById('bar-stu-avatar');
-    if(avEl) avEl.textContent = avatares[mappedStudent] || '👤';
-    var nmEl = document.getElementById('bar-stu-name');
-    if(nmEl) nmEl.textContent = mappedStudent;
-  }
-
-  // Auto-seleccionar estudiante
-  if(mappedStudent) setStudent(mappedStudent);
-
-  // Mostrar panel correcto al inicio
-  setTimeout(function() {
-    if(isAdmin) {
-      showGame(12);
-    } else {
-      // Pasar el estudiante explícitamente para evitar problemas de timing
-      var stuParaPanel = mappedStudent;
-      showGame(14);
-      renderPanelInicio(stuParaPanel);
-    }
-  }, 200);
-
-  adminMostrar();
-  backfillJornadas();
-  renderAvance();
-  renderJornadas("all");
-};
+</script>
+<script>// window.onload manejado por sistema de login abajo
 
 function backfillJornadas() {
   // If there are already jornada entries, skip (don't duplicate)
@@ -4318,16 +4166,14 @@ function adminMostrar() {
   document.getElementById('admin-lbl').style.display = esAdmin ? 'block' : 'none';
   document.getElementById('admin-btn-stats').style.display = esAdmin ? 'block' : 'none';
   document.getElementById('admin-btn-users').style.display = esAdmin ? 'block' : 'none';
-  // Tabla de avance global (solo Administrador)
+  // Tabla de avance (solo Administrador)
   var sepAv = document.getElementById('sep-avance');
   var lblAv = document.getElementById('lbl-avance');
   var btnAv = document.getElementById('btn-avance');
   if(sepAv) sepAv.style.display = esAdmin ? 'block' : 'none';
   if(lblAv) lblAv.style.display = esAdmin ? 'block' : 'none';
   if(btnAv) btnAv.style.display = esAdmin ? 'block' : 'none';
-  // "Mi Avance" solo para estudiantes (no admin)
-  var tabAvP = document.getElementById('tab-avance-personal');
-  if(tabAvP) tabAvP.style.display = esAdmin ? 'none' : 'block';
+  // ADMIN_ESTUDIANTES solo muestra los 3 estudiantes (no al administrador)
 }
 
 function adminRenderStats() {
@@ -4536,10 +4382,10 @@ function jbSyncOnLoad(student) {
 // PANEL 14 — Inicio personal del estudiante
 // ═══════════════════════════════════════════════════════════════
 var AVATARES_STU = {
-  'Miguel Pérez':    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80"><polygon points="12,28 22,10 30,30" fill="#C8A46E"/><polygon points="50,30 58,10 68,28" fill="#C8A46E"/><polygon points="15,26 22,14 28,28" fill="#E8C98A"/><polygon points="52,28 58,14 65,26" fill="#E8C98A"/><ellipse cx="40" cy="42" rx="26" ry="24" fill="#F5ECD7"/><ellipse cx="28" cy="35" rx="10" ry="9" fill="#7A4B1A"/><circle cx="28" cy="35" r="5" fill="#1a1a1a"/><circle cx="52" cy="36" r="5" fill="#1a1a1a"/><circle cx="29.5" cy="33.5" r="1.5" fill="white"/><circle cx="53.5" cy="34.5" r="1.5" fill="white"/><ellipse cx="40" cy="50" rx="12" ry="8" fill="#E8D8C0"/><ellipse cx="40" cy="46" rx="5" ry="3.5" fill="#2a1a1a"/><path d="M36,53 Q40,57 44,53" stroke="#2a1a1a" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="56" rx="4" ry="3" fill="#E06070"/></svg>',
-  'Catalina Vergara':'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80"><ellipse cx="18" cy="22" rx="12" ry="18" fill="#C8844E" transform="rotate(-15 18 22)"/><ellipse cx="62" cy="22" rx="12" ry="18" fill="#C8844E" transform="rotate(15 62 22)"/><ellipse cx="18" cy="23" rx="8" ry="13" fill="#F0A878" transform="rotate(-15 18 23)"/><ellipse cx="62" cy="23" rx="8" ry="13" fill="#F0A878" transform="rotate(15 62 23)"/><ellipse cx="40" cy="46" rx="24" ry="22" fill="#D4905A"/><ellipse cx="40" cy="36" rx="18" ry="12" fill="#E8A87A"/><circle cx="30" cy="42" r="8" fill="white"/><circle cx="50" cy="42" r="8" fill="white"/><circle cx="31" cy="43" r="5.5" fill="#3A2010"/><circle cx="51" cy="43" r="5.5" fill="#3A2010"/><circle cx="32.5" cy="41" r="2" fill="white"/><circle cx="52.5" cy="41" r="2" fill="white"/><ellipse cx="40" cy="53" rx="8" ry="5" fill="#C07848"/><path d="M36,55 Q40,59 44,55" stroke="#2a1a1a" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>',
-  'Leonel Pradines': '<span style="font-size:80px;line-height:1;">🧑‍🎓</span>',
-  'Administrador':   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80"><ellipse cx="40" cy="30" rx="28" ry="7" fill="#1a1a2e"/><rect x="22" y="14" width="36" height="16" rx="4" fill="#1a1a2e"/><line x1="68" y1="30" x2="68" y2="46" stroke="#FCD34D" stroke-width="2.5"/><circle cx="68" cy="48" r="4" fill="#FCD34D"/><ellipse cx="40" cy="52" rx="20" ry="18" fill="#FDDBB4"/><circle cx="33" cy="50" r="3" fill="#2d1a00"/><circle cx="47" cy="50" r="3" fill="#2d1a00"/><path d="M33,58 Q40,64 47,58" stroke="#2d1a00" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="33" cy="50" r="6" fill="none" stroke="#555" stroke-width="1.8"/><circle cx="47" cy="50" r="6" fill="none" stroke="#555" stroke-width="1.8"/><line x1="39" y1="50" x2="41" y2="50" stroke="#555" stroke-width="1.8"/></svg>'
+  'Miguel Pérez':    '🐶',
+  'Catalina Vergara':'🐱',
+  'Leonel Pradines': '🧑‍🎓',
+  'Administrador':   '🎓'
 };
 
 var NOMBRES_COMPLETOS = {
@@ -4550,33 +4396,30 @@ var NOMBRES_COMPLETOS = {
 };
 
 var JUEGOS_INFO = [
-  {id:1,  icon:'🎨', nombre:'Secuencia colores',     tipo:'Memoria',      key:'g1',   subkey:'pts',   extra:'nivel'},
-  {id:2,  icon:'🔢', nombre:'Recuerda números',       tipo:'Atención',     key:'g2',   subkey:'pts',   extra:'digs'},
-  {id:3,  icon:'🖼️', nombre:'Orden imágenes',         tipo:'Memoria',      key:'g3',   subkey:'pts',   extra:'rnd'},
-  {id:4,  icon:'🃏', nombre:'Encuentra pares',        tipo:'Atención',     key:'g4',   subkey:'pts',   extra:'games'},
-  {id:5,  icon:'🔗', nombre:'Cadena numérica',        tipo:'Memoria',      key:'g5',   subkey:'pts',   extra:'niv'},
-  {id:7,  icon:'🧩', nombre:'Recuerda y Reconstruye', tipo:'Memoria',      key:'ryr',  subkey:'pts',   extra:'nivel'},
-  {id:8,  icon:'🛑', nombre:'Control Inhibitorio',    tipo:'F. Ejecutiva', key:'g8ok', subkey:null,    extra:null},
-  {id:9,  icon:'📋', nombre:'Planeamiento',            tipo:'F. Ejecutiva', key:'g9ok', subkey:null,    extra:null},
-  {id:10, icon:'🔀', nombre:'Flexibilidad Cognitiva',  tipo:'F. Ejecutiva', key:'g10ok',subkey:null,    extra:null},
-  {id:11, icon:'↔️', nombre:'Atención Alternada',     tipo:'Atención',     key:'g11ok',subkey:null,    extra:null}
+  {id:1,  icon:'🎨', nombre:'Secuencia colores',   tipo:'Memoria'},
+  {id:2,  icon:'🔢', nombre:'Recuerda números',     tipo:'Atención'},
+  {id:3,  icon:'🖼️', nombre:'Orden imágenes',       tipo:'Memoria'},
+  {id:4,  icon:'🃏', nombre:'Encuentra pares',      tipo:'Atención'},
+  {id:5,  icon:'🔗', nombre:'Cadena numérica',      tipo:'Memoria'},
+  {id:7,  icon:'🧩', nombre:'Recuerda y Reconstruye',tipo:'Memoria'},
+  {id:8,  icon:'🛑', nombre:'Control Inhibitorio',  tipo:'F. Ejecutiva'},
+  {id:9,  icon:'📋', nombre:'Planeamiento',          tipo:'F. Ejecutiva'},
+  {id:10, icon:'🔀', nombre:'Flexibilidad Cognitiva',tipo:'F. Ejecutiva'},
+  {id:11, icon:'↔️', nombre:'Atención Alternada',   tipo:'Atención'}
 ];
 
-// Leer valor de progreso según el formato exacto del diagnóstico
-function p14GetVal(prog, info) {
-  if(info.subkey === null) {
-    // Nuevo formato: número simple (g8ok, g9ok...)
-    return prog[info.key] || 0;
-  } else {
-    // Formato clásico: objeto anidado {pts, nivel, digs...}
-    var obj = prog[info.key];
-    if(!obj) return 0;
-    return obj[info.subkey] || 0;
-  }
-}
 
+function p14GetVal(prog, info) {
+  if(!info || !info.key) return 0;
+  if(info.subkey === null || info.subkey === undefined) {
+    return prog[info.key] || 0;
+  }
+  var obj = prog[info.key];
+  if(!obj) return 0;
+  return obj[info.subkey] || 0;
+}
 function p14GetExtra(prog, info) {
-  if(!info.extra || info.subkey === null) return '';
+  if(!info || !info.extra || info.subkey === null || info.subkey === undefined) return '';
   var obj = prog[info.key];
   if(!obj) return '';
   var v = obj[info.extra];
@@ -4586,227 +4429,313 @@ function p14GetExtra(prog, info) {
   if(info.extra==='rnd')   return 'Ronda '+v;
   if(info.extra==='games') return v+' partidas';
   if(info.extra==='niv')   return 'Nivel '+v;
-  return '';
+  return String(v);
 }
-
-function p14GetErr(prog, info) {
-  if(info.subkey === null) {
-    return prog[info.key.replace('ok','err')] || 0;
-  }
-  return 0;
-}
-
 function renderPanelInicio(forzarStudent) {
-  // Usar estudiante forzado o el global, con fallback desde localStorage
   var stu = forzarStudent || currentStudent;
   if(!stu) {
     var ln = localStorage.getItem('currentStudent') || '';
     stu = STUDENT_MAP[ln] || ln;
   }
   if(!stu) return;
-  currentStudent = stu; // asegurar que quede seteado
+  currentStudent = stu;
 
   var prog = getProgress(stu) || {};
 
-  // Avatar
-  var avatarEl = document.getElementById('p14-avatar');
-  if(avatarEl) avatarEl.innerHTML = AVATARES_STU[stu] || '<span style="font-size:3rem">👤</span>';
+  // ── Avatar y nombre ──
+  var avEl = document.getElementById('p14-avatar');
+  if(avEl) avEl.textContent = AVATARES_STU[stu] || '👤';
+  var nmEl = document.getElementById('p14-nombre');
+  if(nmEl) nmEl.textContent = NOMBRES_COMPLETOS[stu] || stu;
+  var ulEl = document.getElementById('p14-ultima');
+  if(ulEl) ulEl.textContent = prog.lastSeen ? '🕐 Última sesión: ' + prog.lastSeen : '¡Primera sesión!';
 
-  // Nombre completo
-  var nombreEl = document.getElementById('p14-nombre');
-  if(nombreEl) nombreEl.textContent = NOMBRES_COMPLETOS[stu] || stu;
-
-  // Resumen 3 tarjetas
-  var totalOk = 0, totalErr = 0, ejerciciosActivos = 0;
+  // ── Calcular totales ──
+  var totalPts = 0, totalOk = 0, totalErr = 0, ejerciciosActivos = 0;
   JUEGOS_INFO.forEach(function(j) {
-    var ok  = p14GetVal(prog, j);
+    var pts = p14GetVal(prog, j);
     var err = p14GetErr(prog, j);
-    totalOk  += ok;
+    totalPts += pts;
+    totalOk  += (j.subkey === null ? pts : 0); // aciertos para juegos nuevos
     totalErr += err;
-    if(ok > 0) ejerciciosActivos++;
+    if(pts > 0) ejerciciosActivos++;
   });
 
+  // ── Tarjetas resumen ──
   var resEl = document.getElementById('p14-resumen');
-  if(resEl) {
-    resEl.innerHTML =
-      '<div style="background:var(--surface2);border:1.5px solid var(--verde);border-radius:12px;padding:1rem;">' +
-        '<div style="font-size:1.8rem;font-weight:800;color:var(--verde);">'+totalOk+'</div>' +
-        '<div style="font-size:0.8rem;color:var(--texto2);">Aciertos totales</div>' +
-      '</div>' +
-      '<div style="background:var(--surface2);border:1.5px solid var(--azul);border-radius:12px;padding:1rem;">' +
-        '<div style="font-size:1.8rem;font-weight:800;color:var(--azul);">'+ejerciciosActivos+'/10</div>' +
-        '<div style="font-size:0.8rem;color:var(--texto2);">Ejercicios iniciados</div>' +
-      '</div>' +
-      '<div style="background:var(--surface2);border:1.5px solid var(--naranja);border-radius:12px;padding:1rem;">' +
-        '<div style="font-size:1.8rem;font-weight:800;color:var(--naranja);">'+totalErr+'</div>' +
-        '<div style="font-size:0.8rem;color:var(--texto2);">Errores totales</div>' +
-      '</div>';
+  if(resEl) resEl.innerHTML =
+    tarjetaMetrica(totalPts, 'Puntos totales', 'var(--verde)') +
+    tarjetaMetrica(ejerciciosActivos + '/10', 'Ejercicios iniciados', 'var(--azul)') +
+    tarjetaMetrica(prog.lastSeen ? prog.lastSeen.split(',')[0] : '—', 'Última sesión', 'var(--morado)');
+
+  // ── Desafío del día ──
+  renderDesafio(prog, stu);
+
+  // ── Progresión por área ──
+  renderProgresion(prog);
+
+  // ── Tabla detalle ──
+  renderTablaDetalle(prog);
+}
+
+function tarjetaMetrica(valor, label, color) {
+  return '<div style="background:var(--surface);border:1.5px solid '+color+'22;border-radius:12px;padding:1rem;text-align:center;">' +
+    '<div style="font-size:1.5rem;font-weight:800;color:'+color+';">'+valor+'</div>' +
+    '<div style="font-size:0.75rem;color:var(--texto2);margin-top:2px;">'+label+'</div>' +
+    '</div>';
+}
+
+function renderDesafio(prog, stu) {
+  var el = document.getElementById('p14-desafio-contenido');
+  var btnEl = document.getElementById('p14-btn-desafio');
+  if(!el) return;
+
+  // Determinar qué ejercicios necesitan práctica
+  var desafios = [];
+
+  // Ejercicios sin iniciar
+  JUEGOS_INFO.forEach(function(j) {
+    var pts = p14GetVal(prog, j);
+    if(pts === 0) desafios.push({prioridad: 3, panel: j.id, icon: j.icon, nombre: j.nombre, msg: 'Sin iniciar — ¡comienza hoy!'});
+  });
+
+  // Ejercicios con errores recientes
+  JUEGOS_INFO.forEach(function(j) {
+    var pts = p14GetVal(prog, j);
+    var err = p14GetErr(prog, j);
+    if(pts > 0 && err > pts * 0.4) desafios.push({prioridad: 1, panel: j.id, icon: j.icon, nombre: j.nombre, msg: 'Necesita práctica — muchos errores'});
+  });
+
+  // Ejercicios para subir de nivel
+  JUEGOS_INFO.forEach(function(j) {
+    var pts = p14GetVal(prog, j);
+    if(pts > 0) desafios.push({prioridad: 2, panel: j.id, icon: j.icon, nombre: j.nombre, msg: 'Sigue progresando — puedes mejorar'});
+  });
+
+  // Elegir el más prioritario según el día
+  var hoy = new Date().getDay(); // 0-6
+  var idx = hoy % Math.max(desafios.filter(function(d){return d.prioridad===1;}).length || desafios.length, 1);
+  var candidatos = desafios.filter(function(d){return d.prioridad===1;});
+  if(!candidatos.length) candidatos = desafios.filter(function(d){return d.prioridad===3;});
+  if(!candidatos.length) candidatos = desafios;
+
+  var desafio = candidatos[hoy % candidatos.length] || desafios[0];
+
+  if(!desafio) {
+    el.innerHTML = '<p style="color:var(--verde);font-weight:700;">🏆 ¡Has completado todos los ejercicios! Repasa para mejorar tu puntaje.</p>';
+    if(btnEl) { btnEl.textContent = '🔄 Repasar ejercicios'; btnEl.onclick = function(){ showGame(1); }; }
+    return;
   }
 
-  // Tabla de avance personal
-  var tablaEl = document.getElementById('p14-tabla');
-  if(!tablaEl) return;
-  var html = '<table style="width:100%;border-collapse:collapse;font-size:0.9rem;">';
+  var colores = {1:'var(--naranja)', 2:'var(--verde)', 3:'var(--azul)'};
+  var color = colores[desafio.prioridad] || 'var(--azul)';
+
+  el.innerHTML =
+    '<div style="display:flex;align-items:center;gap:1rem;">' +
+      '<span style="font-size:2.5rem;">' + desafio.icon + '</span>' +
+      '<div>' +
+        '<div style="font-weight:800;color:'+color+';font-size:1.05rem;">' + desafio.nombre + '</div>' +
+        '<div style="font-size:0.85rem;color:var(--texto2);margin-top:2px;">' + desafio.msg + '</div>' +
+      '</div>' +
+    '</div>';
+
+  if(btnEl) {
+    btnEl.textContent = '▶ Ir a ' + desafio.icon + ' ' + desafio.nombre;
+    btnEl.style.background = 'linear-gradient(135deg,' + color + ',' + color + 'AA)';
+    (function(panelId){ btnEl.onclick = function(){ showGame(panelId); }; })(desafio.panel);
+  }
+}
+
+function renderProgresion(prog) {
+  var el = document.getElementById('p14-progresion');
+  if(!el) return;
+
+  var areas = [
+    { nombre:'🎯 Atención',          color:'var(--azul)',    juegos:[2,4,11] },
+    { nombre:'🧠 Memoria',           color:'var(--morado)',  juegos:[1,5,3,7] },
+    { nombre:'⚡ F. Ejecutivas',      color:'var(--naranja)', juegos:[8,9,10] }
+  ];
+
+  var html = '';
+  areas.forEach(function(area) {
+    var totalPts = 0, maxPts = 0, iniciados = 0;
+    area.juegos.forEach(function(id) {
+      var j = JUEGOS_INFO.find(function(x){return x.id===id;});
+      if(!j) return;
+      var pts = p14GetVal(prog, j);
+      totalPts += pts;
+      maxPts   += 300;
+      if(pts > 0) iniciados++;
+    });
+    var pct = maxPts > 0 ? Math.min(100, Math.round(totalPts/maxPts*100)) : 0;
+    var stars = pct >= 80 ? '⭐⭐⭐' : pct >= 50 ? '⭐⭐' : pct >= 20 ? '⭐' : '☆';
+
+    html +=
+      '<div style="margin-bottom:1rem;">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+          '<span style="font-weight:700;color:'+area.color+';">'+area.nombre+'</span>' +
+          '<span style="font-size:0.85rem;color:var(--texto2);">'+stars+' '+iniciados+'/'+area.juegos.length+' iniciados</span>' +
+        '</div>' +
+        '<div style="height:12px;background:var(--border);border-radius:8px;overflow:hidden;">' +
+          '<div style="height:100%;width:'+pct+'%;background:'+area.color+';border-radius:8px;transition:width 0.8s;"></div>' +
+        '</div>' +
+        '<div style="font-size:0.72rem;color:var(--texto2);margin-top:2px;">'+totalPts+' pts · '+pct+'% del máximo</div>' +
+      '</div>';
+  });
+  el.innerHTML = html;
+}
+
+function renderTablaDetalle(prog) {
+  var el = document.getElementById('p14-tabla');
+  if(!el) return;
+
+  var html = '<table style="width:100%;border-collapse:collapse;font-size:0.88rem;">';
   html += '<tr style="border-bottom:2px solid var(--border);">' +
-    '<th style="text-align:left;padding:8px;color:var(--texto2);">Ejercicio</th>' +
-    '<th style="text-align:left;padding:8px;color:var(--texto2);">Área</th>' +
-    '<th style="text-align:center;padding:8px;color:var(--verde);">✓</th>' +
-    '<th style="text-align:center;padding:8px;color:var(--rojo);">✗</th>' +
-    '<th style="text-align:left;padding:8px;color:var(--texto2);">Progreso</th>' +
+    '<th style="text-align:left;padding:7px;color:var(--texto2);">Ejercicio</th>' +
+    '<th style="text-align:center;padding:7px;color:var(--texto2);">Pts</th>' +
+    '<th style="text-align:center;padding:7px;color:var(--texto2);">Extra</th>' +
+    '<th style="text-align:left;padding:7px;color:var(--texto2);">Barra</th>' +
     '</tr>';
 
   JUEGOS_INFO.forEach(function(j) {
-    var ok  = p14GetVal(prog, j);
-    var err = p14GetErr(prog, j);
-    var total = ok + err;
-    var pct = total > 0 ? Math.round(ok/total*100) : 0;
-    var sinDatos = ok === 0 && err === 0;
-    var barColor = pct >= 70 ? 'var(--verde)' : pct >= 40 ? 'var(--amarillo)' : 'var(--rojo)';
+    var pts   = p14GetVal(prog, j);
+    var extra = p14GetExtra(prog, j);
+    var sinDatos = pts === 0;
+    var pct = Math.min(100, Math.round(pts/300*100));
+    var barColor = pct >= 70 ? 'var(--verde)' : pct >= 30 ? 'var(--amarillo)' : 'var(--rojo)';
     var estado = sinDatos ? 'var(--border)' : barColor;
-    var label = sinDatos ? '—' : ok;
 
-    var extraInfo = p14GetExtra(prog, j);
     html += '<tr style="border-bottom:1px solid var(--border);">' +
-      '<td style="padding:8px;"><span style="font-size:1.1rem;">'+j.icon+'</span> '+j.nombre+
-        (extraInfo?'<br><span style="font-size:0.72rem;color:var(--morado);">'+extraInfo+'</span>':'')+'</td>' +
-      '<td style="padding:8px;font-size:0.78rem;color:var(--texto2);">'+j.tipo+'</td>' +
-      '<td style="text-align:center;padding:8px;color:'+(sinDatos?'var(--texto2)':'var(--verde)')+';font-weight:800;font-size:1rem;">'+label+'</td>' +
-      '<td style="text-align:center;padding:8px;color:var(--rojo);font-weight:700;">'+(err>0?err:'—')+'</td>' +
-      '<td style="padding:8px;min-width:100px;">' +
-        '<div style="height:8px;background:var(--border);border-radius:6px;overflow:hidden;">' +
-          '<div style="height:100%;width:'+pct+'%;background:'+estado+';border-radius:6px;transition:width 0.6s;"></div>' +
+      '<td style="padding:7px;">'+j.icon+' '+j.nombre+'</td>' +
+      '<td style="text-align:center;padding:7px;font-weight:800;color:'+(sinDatos?'var(--texto2)':'var(--verde)')+';">'+(sinDatos?'—':pts)+'</td>' +
+      '<td style="text-align:center;padding:7px;font-size:0.78rem;color:var(--texto2);">'+(extra||'—')+'</td>' +
+      '<td style="padding:7px;min-width:80px;">' +
+        '<div style="height:7px;background:var(--border);border-radius:6px;overflow:hidden;">' +
+          '<div style="height:100%;width:'+pct+'%;background:'+estado+';border-radius:6px;"></div>' +
         '</div>' +
-        '<div style="font-size:0.7rem;color:var(--texto2);margin-top:2px;">'+(sinDatos?'Sin datos':pct+'%')+'</div>' +
+        '<div style="font-size:0.68rem;color:var(--texto2);margin-top:1px;">'+(sinDatos?'Sin datos':pct+'%')+'</div>' +
       '</td>' +
       '</tr>';
   });
 
   html += '</table>';
-  tablaEl.innerHTML = html;
+  el.innerHTML = html;
 }
 
 
-// ═══════════════════════════════════════════════════════════════
-// PANEL 15 — Mi Avance Personal (tabla detallada siempre accesible)
-// ═══════════════════════════════════════════════════════════════
-var AREAS_JUEGOS = [
-  {
-    nombre: '🎯 Atención',
-    color: 'var(--azul)',
-    juegos: [
-      {id:2,  icon:'🔢', nombre:'Recuerda los números',     key:'g2',   subkey:'pts', extra:'digs'},
-      {id:4,  icon:'🃏', nombre:'Encuentra los pares',      key:'g4',   subkey:'pts', extra:'games'},
-      {id:11, icon:'↔️', nombre:'Atención Alternada',       key:'g11ok',subkey:null,  extra:null}
-    ]
-  },
-  {
-    nombre: '🧠 Memoria',
-    color: 'var(--morado)',
-    juegos: [
-      {id:1,  icon:'🎨', nombre:'Secuencia de colores',     key:'g1',   subkey:'pts', extra:'nivel'},
-      {id:5,  icon:'🔗', nombre:'Cadena numérica',          key:'g5',   subkey:'pts', extra:'niv'},
-      {id:3,  icon:'🖼️', nombre:'Orden de imágenes',        key:'g3',   subkey:'pts', extra:'rnd'},
-      {id:7,  icon:'🧩', nombre:'Recuerda y Reconstruye',   key:'ryr',  subkey:'pts', extra:'nivel'}
-    ]
-  },
-  {
-    nombre: '⚡ Funciones Ejecutivas',
-    color: 'var(--naranja)',
-    juegos: [
-      {id:8,  icon:'🛑', nombre:'Control Inhibitorio',      key:'g8ok', subkey:null, extra:null},
-      {id:9,  icon:'📋', nombre:'Planeamiento',              key:'g9ok', subkey:null, extra:null},
-      {id:10, icon:'🔀', nombre:'Flexibilidad Cognitiva',    key:'g10ok',subkey:null, extra:null}
-    ]
+// ═══════════════════════════════════════════════════════
+// SISTEMA DE LOGIN
+// ═══════════════════════════════════════════════════════
+var USUARIOS_LOGIN = {
+  '23483893-8':  { nombre: 'Miguel Pérez Lagos',             password: '23483893-8'  },
+  '23420823-3':  { nombre: 'Catalina Anais Vergara Cárcamo', password: '23420823-3'  },
+  '23959701-7':  { nombre: 'Leonel Hernán Pradines Flández', password: '23959701-7'  },
+  'Administrador':{ nombre: 'Administrador',                 password: '77633333'    }
+};
+
+function loginIngresar() {
+  var rut  = (document.getElementById('login-rut').value  || '').trim();
+  var pass = (document.getElementById('login-pass').value || '').trim();
+  var err  = document.getElementById('login-err');
+  err.style.display = 'none';
+  if(!rut || !pass) {
+    err.textContent = '⚠️ Ingresa tu RUT y contraseña';
+    err.style.display = 'block'; return;
   }
-];
-
-function renderPanel15() {
-  var stu = currentStudent;
-  if(!stu) {
-    var ln = localStorage.getItem('currentStudent') || '';
-    stu = STUDENT_MAP[ln] || ln;
+  var user = USUARIOS_LOGIN[rut];
+  if(user && user.password === pass) {
+    localStorage.setItem('currentStudent', user.nombre);
+    // Ocultar login, mostrar app
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app-screen').style.display   = 'block';
+    // Actualizar variables
+    _loginName     = user.nombre;
+    currentStudent = STUDENT_MAP[_loginName] || _loginName;
+    appOnload();
+  } else {
+    err.textContent = '❌ RUT o contraseña incorrectos';
+    err.style.display = 'block';
+    document.getElementById('login-pass').value = '';
   }
-  if(!stu) return;
-
-  var prog = getProgress(stu) || {};
-
-  // Avatar y nombre
-  var avEl = document.getElementById('p15-avatar');
-  if(avEl) avEl.innerHTML = AVATARES_STU[stu] || '<span style="font-size:2rem">👤</span>';
-  var nmEl = document.getElementById('p15-nombre');
-  if(nmEl) nmEl.textContent = NOMBRES_COMPLETOS[stu] || stu;
-
-  // Calcular totales
-  var totalPts = 0, totalJuegos = 0;
-  var allJuegos = [];
-  AREAS_JUEGOS.forEach(function(a){ a.juegos.forEach(function(j){ allJuegos.push(j); }); });
-  allJuegos.forEach(function(j) {
-    var v = p14GetVal(prog, j);
-    if(v > 0) { totalPts += v; totalJuegos++; }
-  });
-
-  // Tarjetas resumen
-  var resEl = document.getElementById('p15-resumen');
-  if(resEl) resEl.innerHTML =
-    '<div style="background:var(--surface2);border:1.5px solid var(--verde);border-radius:12px;padding:1rem;text-align:center;">' +
-      '<div style="font-size:1.8rem;font-weight:800;color:var(--verde);">'+totalPts+'</div>' +
-      '<div style="font-size:0.78rem;color:var(--texto2);">Puntos totales</div>' +
-    '</div>' +
-    '<div style="background:var(--surface2);border:1.5px solid var(--azul);border-radius:12px;padding:1rem;text-align:center;">' +
-      '<div style="font-size:1.8rem;font-weight:800;color:var(--azul);">'+totalJuegos+'/10</div>' +
-      '<div style="font-size:0.78rem;color:var(--texto2);">Ejercicios iniciados</div>' +
-    '</div>' +
-    '<div style="background:var(--surface2);border:1.5px solid var(--morado);border-radius:12px;padding:1rem;text-align:center;">' +
-      '<div style="font-size:1.8rem;font-weight:800;color:var(--morado);">'+(prog.lastSeen||'—')+'</div>' +
-      '<div style="font-size:0.78rem;color:var(--texto2);">Última sesión</div>' +
-    '</div>';
-
-  // Tabla por áreas
-  var areasEl = document.getElementById('p15-areas');
-  if(!areasEl) return;
-  var html = '';
-
-  AREAS_JUEGOS.forEach(function(area) {
-    html += '<div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:14px;padding:1rem;margin-bottom:1rem;">';
-    html += '<div style="font-weight:800;color:'+area.color+';margin-bottom:0.8rem;font-size:1rem;">'+area.nombre+'</div>';
-    html += '<table style="width:100%;border-collapse:collapse;font-size:0.88rem;">';
-    html += '<tr style="border-bottom:1px solid var(--border);">' +
-      '<th style="text-align:left;padding:6px;color:var(--texto2);">Ejercicio</th>' +
-      '<th style="text-align:center;padding:6px;color:var(--texto2);">Puntos</th>' +
-      '<th style="text-align:center;padding:6px;color:var(--texto2);">Nivel</th>' +
-      '<th style="text-align:left;padding:6px;color:var(--texto2);">Progreso</th>' +
-      '</tr>';
-
-    area.juegos.forEach(function(j) {
-      var pts = p14GetVal(prog, j);
-      var extra = p14GetExtra(prog, j);
-      var sinDatos = pts === 0;
-      // Calcular max aproximado para barra
-      var maxPts = j.subkey === null ? 50 : 300;
-      var pct = Math.min(100, Math.round(pts/maxPts*100));
-      var barColor = pct >= 70 ? 'var(--verde)' : pct >= 30 ? 'var(--amarillo)' : 'var(--rojo)';
-
-      html += '<tr style="border-bottom:1px solid var(--border);">' +
-        '<td style="padding:7px;">'+j.icon+' '+j.nombre+'</td>' +
-        '<td style="text-align:center;padding:7px;font-weight:800;color:'+(sinDatos?'var(--texto2)':area.color)+';">'+(sinDatos?'—':pts)+'</td>' +
-        '<td style="text-align:center;padding:7px;font-size:0.8rem;color:var(--texto2);">'+(sinDatos?'—':extra||'✓')+'</td>' +
-        '<td style="padding:7px;min-width:80px;">' +
-          (sinDatos
-            ? '<span style="font-size:0.75rem;color:var(--texto2);">Sin datos</span>'
-            : '<div style="height:7px;background:var(--border);border-radius:6px;overflow:hidden;"><div style="height:100%;width:'+pct+'%;background:'+barColor+';border-radius:6px;"></div></div>') +
-        '</td>' +
-        '</tr>';
-    });
-
-    html += '</table></div>';
-  });
-
-  areasEl.innerHTML = html;
 }
 
+function logoutApp() {
+  if(confirm('¿Cerrar sesión?')) {
+    localStorage.removeItem('currentStudent');
+    currentStudent = ''; _loginName = '';
+    document.getElementById('app-screen').style.display   = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    var rEl = document.getElementById('login-rut');
+    var pEl = document.getElementById('login-pass');
+    if(rEl) rEl.value = '';
+    if(pEl) pEl.value = '';
+  }
+}
+
+function appOnload() {
+  _loginName     = localStorage.getItem('currentStudent') || '';
+  currentStudent = STUDENT_MAP[_loginName] || _loginName;
+  if(!_loginName) { logoutApp(); return; }
+
+  var isAdmin = (currentStudent === 'Administrador');
+
+  // Ocultar todos los paneles
+  [1,2,3,4,5,6,7,8,9,10,11,12,13,14].forEach(function(id) {
+    var el = document.getElementById('panel'+id);
+    if(el) el.style.display = 'none';
+  });
+
+  // Barra de usuario
+  var barAdmin   = document.getElementById('bar-admin');
+  var barStudent = document.getElementById('bar-student');
+  if(isAdmin) {
+    if(barAdmin)   barAdmin.style.display   = 'block';
+    if(barStudent) barStudent.style.display = 'none';
+  } else {
+    if(barAdmin)   barAdmin.style.display   = 'none';
+    if(barStudent) barStudent.style.display = 'flex';
+    var avatares = {'Miguel Pérez':'🐶','Catalina Vergara':'🐱','Leonel Pradines':'🧑‍🎓','Administrador':'🎓'};
+    var avEl = document.getElementById('bar-stu-avatar');
+    var nmEl = document.getElementById('bar-stu-name');
+    if(avEl) avEl.textContent = avatares[currentStudent] || '👤';
+    if(nmEl) nmEl.textContent = currentStudent;
+  }
+
+  // Auto-seleccionar estudiante
+  if(typeof setStudent === 'function') setStudent(currentStudent);
+  if(typeof adminMostrar === 'function') adminMostrar();
+  if(typeof backfillJornadas === 'function') backfillJornadas();
+  if(typeof renderAvance === 'function') renderAvance();
+  if(typeof renderJornadas === 'function') renderJornadas('all');
+
+  // Mostrar panel correcto
+  setTimeout(function() {
+    if(isAdmin) {
+      showGame(12);
+    } else {
+      showGame(14);
+      if(typeof renderPanelInicio === 'function') renderPanelInicio(currentStudent);
+    }
+  }, 200);
+}
+
+// Modificar window.onload para mostrar login
+window.onload = function() {
+  localStorage.setItem('jsonbin_api_key', '$2a$10$aN/wdIxgIPOfUKLfmp6oHuZuelJlkbFPWswWLQRF/kM0EwBCiy5Gy');
+  // Mostrar login, ocultar app
+  var ls = document.getElementById('login-screen');
+  var as = document.getElementById('app-screen');
+  if(ls) ls.style.display = 'flex';
+  if(as) as.style.display = 'none';
+  // Enter en campos
+  var p = document.getElementById('login-pass');
+  if(p) p.onkeypress = function(e){ if(e.key==='Enter') loginIngresar(); };
+  var r = document.getElementById('login-rut');
+  if(r) r.onkeypress = function(e){ if(e.key==='Enter') loginIngresar(); };
+};
 
 </script>
-
 </div><!-- app-screen -->
+</div><!-- /app-screen -->
 </body>
 </html>
