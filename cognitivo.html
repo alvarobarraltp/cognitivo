@@ -4480,17 +4480,37 @@ var NOMBRES_COMPLETOS = {
 };
 
 var JUEGOS_INFO = [
-  {id:1,  icon:'🎨', nombre:'Secuencia colores',   tipo:'Memoria'},
-  {id:2,  icon:'🔢', nombre:'Recuerda números',     tipo:'Atención'},
-  {id:3,  icon:'🖼️', nombre:'Orden imágenes',       tipo:'Memoria'},
-  {id:4,  icon:'🃏', nombre:'Encuentra pares',      tipo:'Atención'},
-  {id:5,  icon:'🔗', nombre:'Cadena numérica',      tipo:'Memoria'},
-  {id:7,  icon:'🧩', nombre:'Recuerda y Reconstruye',tipo:'Memoria'},
-  {id:8,  icon:'🛑', nombre:'Control Inhibitorio',  tipo:'F. Ejecutiva'},
-  {id:9,  icon:'📋', nombre:'Planeamiento',          tipo:'F. Ejecutiva'},
-  {id:10, icon:'🔀', nombre:'Flexibilidad Cognitiva',tipo:'F. Ejecutiva'},
-  {id:11, icon:'↔️', nombre:'Atención Alternada',   tipo:'Atención'}
+  {id:1,  icon:'🎨', nombre:'Secuencia colores',    tipo:'Memoria',       key:'g1',  subkey:'pts'},
+  {id:2,  icon:'🔢', nombre:'Recuerda números',      tipo:'Atención',      key:'g2',  subkey:'pts'},
+  {id:3,  icon:'🖼️', nombre:'Orden imágenes',        tipo:'Memoria',       key:'g3',  subkey:'pts'},
+  {id:4,  icon:'🃏', nombre:'Encuentra pares',       tipo:'Atención',      key:'g4',  subkey:'games'},
+  {id:5,  icon:'🔗', nombre:'Cadena numérica',       tipo:'Memoria',       key:'g5',  subkey:'pts'},
+  {id:7,  icon:'🧩', nombre:'Recuerda y Reconstruye',tipo:'Memoria',       key:'ryr', subkey:'pts'},
+  {id:8,  icon:'🛑', nombre:'Control Inhibitorio',   tipo:'F. Ejecutiva',  key:'g8ok',subkey:null},
+  {id:9,  icon:'📋', nombre:'Planeamiento',           tipo:'F. Ejecutiva',  key:'g9ok',subkey:null},
+  {id:10, icon:'🔀', nombre:'Flexibilidad Cognitiva', tipo:'F. Ejecutiva',  key:'g10ok',subkey:null},
+  {id:11, icon:'↔️', nombre:'Atención Alternada',    tipo:'Atención',      key:'g11ok',subkey:null}
 ];
+
+// Leer valor de progreso según el formato (obj anidado o número simple)
+function p14GetVal(prog, info) {
+  if(info.subkey === null) {
+    // Nuevo formato: número simple (g8ok, g9ok...)
+    return prog[info.key] || 0;
+  } else {
+    // Formato clásico: objeto anidado {pts, nivel, digs...}
+    var obj = prog[info.key];
+    if(!obj) return 0;
+    return obj[info.subkey] || 0;
+  }
+}
+
+function p14GetErr(prog, info) {
+  if(info.subkey === null) {
+    return prog[info.key.replace('ok','err')] || 0;
+  }
+  return 0;
+}
 
 function renderPanelInicio(forzarStudent) {
   // Usar estudiante forzado o el global, con fallback desde localStorage
@@ -4515,8 +4535,8 @@ function renderPanelInicio(forzarStudent) {
   // Resumen 3 tarjetas
   var totalOk = 0, totalErr = 0, ejerciciosActivos = 0;
   JUEGOS_INFO.forEach(function(j) {
-    var ok = prog['g'+j.id+'ok'] || (prog['g'+j.id] ? prog['g'+j.id].pts||0 : 0);
-    var err = prog['g'+j.id+'err'] || 0;
+    var ok  = p14GetVal(prog, j);
+    var err = p14GetErr(prog, j);
     totalOk  += ok;
     totalErr += err;
     if(ok > 0) ejerciciosActivos++;
@@ -4552,23 +4572,25 @@ function renderPanelInicio(forzarStudent) {
     '</tr>';
 
   JUEGOS_INFO.forEach(function(j) {
-    var ok  = prog['g'+j.id+'ok']  || (prog['g'+j.id] ? (prog['g'+j.id].pts||0) : 0);
-    var err = prog['g'+j.id+'err'] || 0;
+    var ok  = p14GetVal(prog, j);
+    var err = p14GetErr(prog, j);
     var total = ok + err;
     var pct = total > 0 ? Math.round(ok/total*100) : 0;
+    var sinDatos = ok === 0 && err === 0;
     var barColor = pct >= 70 ? 'var(--verde)' : pct >= 40 ? 'var(--amarillo)' : 'var(--rojo)';
-    var estado = ok > 0 ? barColor : 'var(--border)';
+    var estado = sinDatos ? 'var(--border)' : barColor;
+    var label = sinDatos ? '—' : ok;
 
     html += '<tr style="border-bottom:1px solid var(--border);">' +
       '<td style="padding:8px;">'+j.icon+' '+j.nombre+'</td>' +
       '<td style="padding:8px;font-size:0.78rem;color:var(--texto2);">'+j.tipo+'</td>' +
-      '<td style="text-align:center;padding:8px;color:var(--verde);font-weight:700;">'+ok+'</td>' +
-      '<td style="text-align:center;padding:8px;color:var(--rojo);font-weight:700;">'+err+'</td>' +
+      '<td style="text-align:center;padding:8px;color:'+(sinDatos?'var(--texto2)':'var(--verde)')+';font-weight:700;">'+label+'</td>' +
+      '<td style="text-align:center;padding:8px;color:var(--rojo);font-weight:700;">'+(err||'—')+'</td>' +
       '<td style="padding:8px;min-width:100px;">' +
         '<div style="height:8px;background:var(--border);border-radius:6px;overflow:hidden;">' +
           '<div style="height:100%;width:'+pct+'%;background:'+estado+';border-radius:6px;transition:width 0.6s;"></div>' +
         '</div>' +
-        '<div style="font-size:0.7rem;color:var(--texto2);margin-top:2px;">'+pct+'%</div>' +
+        '<div style="font-size:0.7rem;color:var(--texto2);margin-top:2px;">'+(sinDatos?'Sin datos':pct+'%')+'</div>' +
       '</td>' +
       '</tr>';
   });
