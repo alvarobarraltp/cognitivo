@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0062)file:///Users/alvarobarra/Downloads/ejercicios_memoria_59.html -->
+<!-- saved from url=(0062)file:///Users/alvarobarra/Downloads/ejercicios_memoria_60.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -825,7 +825,7 @@
       <span class="stu-name">Leonel Pradines</span>
       <span class="stu-game-label" id="stu-2-info">Cadena · 25-04-26,</span>
     </button>
-    <button class="stu-btn" id="stu-3" onclick="setStudent(&#39;Control&#39;)">
+    <button class="stu-btn" id="stu-3" onclick="setStudent(&#39;Administrador&#39;)">
       <span class="stu-avatar"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="44" height="44">
   <!-- graduation cap brim -->
   <ellipse cx="40" cy="30" rx="28" ry="7" fill="#1a1a2e"></ellipse>
@@ -919,9 +919,9 @@
     <span class="tab-text">Estudiantes</span>
   </button>
 
-  <div class="sidebar-divider"></div>
-  <div class="sidebar-label">📊 Profesor</div>
-  <button class="tab" onclick="showGame(6)" style="color:#4ADE80;">
+  <div class="sidebar-divider" id="sep-avance" style="display: none;"></div>
+  <div class="sidebar-label" id="lbl-avance" style="display: none;">📊 Profesor</div>
+  <button class="tab" id="btn-avance" onclick="showGame(6)" style="color: rgb(74, 222, 128); display: none;">
     <span class="tab-icon">📊</span>
     <span class="tab-text">Tabla de avance</span>
   </button>
@@ -1182,7 +1182,7 @@
               <th>Última sesión</th>
             </tr>
           </thead>
-          <tbody id="avance-tbody"><tr><td>Miguel Pérez</td><td><span class="nivel-badge nb-2">Niv. 5</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:33%"></div></div><br><small>100 pts</small></td><td><span class="nivel-badge nb-3">7 díg.</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:30%"></div></div><br><small>90 pts</small></td><td><span class="nivel-badge nb-2">Ronda 4</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:67%"></div></div><br><small>200 pts</small></td><td><span class="nivel-badge nb-3">25 mov.</span><br><small>Nivel 1 (4 pares)</small><br><small>1 partidas</small></td><td><span class="nivel-badge nb-2">Niv. 4</span><br><small>Racha: 6</small></td><td><span class="nivel-badge nb-0">—</span></td><td class="last-played">25-04-26, 08:36 p.&nbsp;m.</td></tr><tr><td>Catalina Vergara</td><td><span class="nivel-badge nb-2">Niv. 5</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:33%"></div></div><br><small>100 pts</small></td><td><span class="nivel-badge nb-2">5 díg.</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:20%"></div></div><br><small>60 pts</small></td><td><span class="nivel-badge nb-3">Ronda 6</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:100%"></div></div><br><small>380 pts</small></td><td><span class="nivel-badge nb-3">14 mov.</span><br><small>Nivel 1 (4 pares)</small><br><small>1 partidas</small></td><td><span class="nivel-badge nb-0">Niv. 1</span><br><small>Racha: 2</small></td><td><span class="nivel-badge nb-0">—</span></td><td class="last-played">24-04-26, 11:38 a.&nbsp;m.</td></tr><tr><td>Leonel Pradines</td><td><span class="nivel-badge nb-0">Niv. 1</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:0%"></div></div><br><small>0 pts</small></td><td><span class="nivel-badge nb-0">3 díg.</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:0%"></div></div><br><small>0 pts</small></td><td><span class="nivel-badge nb-0">Ronda 1</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:0%"></div></div><br><small>0 pts</small></td><td><span class="nivel-badge nb-0">—</span><br><small>Nivel 1 (4 pares)</small><br><small>0 partidas</small></td><td><span class="nivel-badge nb-0">Niv. 1</span><br><small>Racha: 0</small></td><td><span class="nivel-badge nb-0">—</span></td><td class="last-played">25-04-26, 08:20 p.&nbsp;m.</td></tr><tr><td>Control</td><td><span class="nivel-badge nb-0">Niv. 1</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:0%"></div></div><br><small>0 pts</small></td><td><span class="nivel-badge nb-0">3 díg.</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:0%"></div></div><br><small>0 pts</small></td><td><span class="nivel-badge nb-0">Ronda 1</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:0%"></div></div><br><small>0 pts</small></td><td><span class="nivel-badge nb-0">—</span><br><small>Nivel 1 (4 pares)</small><br><small>0 partidas</small></td><td><span class="nivel-badge nb-0">Niv. 1</span><br><small>Racha: 0</small></td><td><span class="nivel-badge nb-0">—</span></td><td class="last-played">—</td></tr></tbody>
+          <tbody id="avance-tbody"><tr><td>Miguel Pérez <span style="font-size:0.75rem;background:var(--azul);color:white;padding:1px 7px;border-radius:10px;">activo</span></td><td><span class="nivel-badge nb-2">Niv. 5</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:33%"></div></div><br><small>100 pts</small></td><td><span class="nivel-badge nb-3">7 díg.</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:30%"></div></div><br><small>90 pts</small></td><td><span class="nivel-badge nb-2">Ronda 4</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:67%"></div></div><br><small>200 pts</small></td><td><span class="nivel-badge nb-3">25 mov.</span><br><small>Nivel 1 (4 pares)</small><br><small>1 partidas</small></td><td><span class="nivel-badge nb-2">Niv. 4</span><br><small>Racha: 6</small></td><td><span class="nivel-badge nb-0">—</span></td><td class="last-played">25-04-26, 08:36 p.&nbsp;m.</td></tr><tr><td>Catalina Vergara</td><td><span class="nivel-badge nb-2">Niv. 5</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:33%"></div></div><br><small>100 pts</small></td><td><span class="nivel-badge nb-2">5 díg.</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:20%"></div></div><br><small>60 pts</small></td><td><span class="nivel-badge nb-3">Ronda 6</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:100%"></div></div><br><small>380 pts</small></td><td><span class="nivel-badge nb-3">14 mov.</span><br><small>Nivel 1 (4 pares)</small><br><small>1 partidas</small></td><td><span class="nivel-badge nb-0">Niv. 1</span><br><small>Racha: 2</small></td><td><span class="nivel-badge nb-0">—</span></td><td class="last-played">24-04-26, 11:38 a.&nbsp;m.</td></tr><tr><td>Leonel Pradines</td><td><span class="nivel-badge nb-0">Niv. 1</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:0%"></div></div><br><small>0 pts</small></td><td><span class="nivel-badge nb-0">3 díg.</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:0%"></div></div><br><small>0 pts</small></td><td><span class="nivel-badge nb-0">Ronda 1</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:0%"></div></div><br><small>0 pts</small></td><td><span class="nivel-badge nb-0">—</span><br><small>Nivel 1 (4 pares)</small><br><small>0 partidas</small></td><td><span class="nivel-badge nb-0">Niv. 1</span><br><small>Racha: 0</small></td><td><span class="nivel-badge nb-0">—</span></td><td class="last-played">25-04-26, 08:20 p.&nbsp;m.</td></tr><tr><td>Administrador</td><td><span class="nivel-badge nb-0">Niv. 1</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:0%"></div></div><br><small>0 pts</small></td><td><span class="nivel-badge nb-0">3 díg.</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:0%"></div></div><br><small>0 pts</small></td><td><span class="nivel-badge nb-0">Ronda 1</span><br><div class="pts-bar-wrap"><div class="pts-bar" style="width:0%"></div></div><br><small>0 pts</small></td><td><span class="nivel-badge nb-0">—</span><br><small>Nivel 1 (4 pares)</small><br><small>0 partidas</small></td><td><span class="nivel-badge nb-0">Niv. 1</span><br><small>Racha: 0</small></td><td><span class="nivel-badge nb-0">—</span></td><td class="last-played">—</td></tr></tbody>
         </table>
       </div>
       <div style="margin-top:1rem;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
@@ -1195,7 +1195,7 @@
     <div class="card jornada-section">
       <div class="jornada-section-title">📅 Informe por estudiante</div>
       <p style="font-size:0.88rem;color:var(--texto2);margin-bottom:1.2rem;">Pincha un estudiante para ver su historial de avance.</p>
-      <div class="stu-selector" id="jornada-selector"><button class="stu-report-btn srb-pick" data-st="Miguel Pérez" onclick="showInforme(this.dataset.st)"><span class="srb-avatar">🧑</span><span class="srb-name">Miguel Pérez</span><span style="font-size:0.68rem;color:#475569;">1 sesión</span></button><button class="stu-report-btn srb-pick" data-st="Catalina Vergara" onclick="showInforme(this.dataset.st)"><span class="srb-avatar">👩</span><span class="srb-name">Catalina Vergara</span><span style="font-size:0.68rem;color:#475569;">1 sesión</span></button><button class="stu-report-btn srb-pick" data-st="Leonel Pradines" onclick="showInforme(this.dataset.st)"><span class="srb-avatar">🧑‍🎓</span><span class="srb-name">Leonel Pradines</span><span style="font-size:0.68rem;color:#475569;">1 sesión</span></button><button class="stu-report-btn srb-pick" data-st="Control" onclick="showInforme(this.dataset.st)"><span class="srb-avatar">🎓</span><span class="srb-name">Control</span><span style="font-size:0.68rem;color:#475569;">Sin registros</span></button></div>
+      <div class="stu-selector" id="jornada-selector"><button class="stu-report-btn srb-pick" data-st="Miguel Pérez" onclick="showInforme(this.dataset.st)"><span class="srb-avatar">🧑</span><span class="srb-name">Miguel Pérez</span><span style="font-size:0.68rem;color:#475569;">1 sesión</span></button><button class="stu-report-btn srb-pick" data-st="Catalina Vergara" onclick="showInforme(this.dataset.st)"><span class="srb-avatar">👩</span><span class="srb-name">Catalina Vergara</span><span style="font-size:0.68rem;color:#475569;">1 sesión</span></button><button class="stu-report-btn srb-pick" data-st="Leonel Pradines" onclick="showInforme(this.dataset.st)"><span class="srb-avatar">🧑‍🎓</span><span class="srb-name">Leonel Pradines</span><span style="font-size:0.68rem;color:#475569;">1 sesión</span></button><button class="stu-report-btn srb-pick" data-st="Administrador" onclick="showInforme(this.dataset.st)"><span class="srb-avatar">🎓</span><span class="srb-name">Administrador</span><span style="font-size:0.68rem;color:#475569;">Sin registros</span></button></div>
       <div id="jornada-content"></div>
       <div style="margin-top:1rem;">
         <button class="btn btn-reset" onclick="clearJornadas()">🗑️ Borrar historial</button>
@@ -1272,8 +1272,17 @@
 
 <script>
 // ======= ESTUDIANTE ACTIVO =======
-var currentStudent = localStorage.getItem('currentStudent') || '';
-var STUDENTS = ['Miguel Pérez', 'Catalina Vergara', 'Leonel Pradines', 'Control'];
+// Mapeo nombre completo (login) → nombre corto (app)
+var STUDENT_MAP = {
+  'Miguel Pérez Lagos':             'Miguel Pérez',
+  'Catalina Anais Vergara Cárcamo': 'Catalina Vergara',
+  'Leonel Hernán Pradines Flández': 'Leonel Pradines',
+  'Administrador':                  'Administrador'
+};
+
+var _loginName = localStorage.getItem('currentStudent') || '';
+var currentStudent = STUDENT_MAP[_loginName] || _loginName;
+var STUDENTS = ['Miguel Pérez', 'Catalina Vergara', 'Leonel Pradines', 'Administrador'];
 var STU_IDS = ['stu-0', 'stu-1', 'stu-2', 'stu-3'];
 
 // ======= CONFIGURACIÓN DE COMPLEJIDAD POR ESTUDIANTE =======
@@ -1484,6 +1493,12 @@ function requireStudent() {
 
 function desactivarEstudiante() {
   // Llamar al fallar: quitar el estudiante activo para que elijan de nuevo
+  // En modo login automático, no limpiar el estudiante, solo resetear estado
+  if(document.getElementById('student-selector') && document.getElementById('student-selector').style.display === 'none') {
+    // Usuario normal: re-seleccionar automáticamente
+    var mapped = STUDENT_MAP[localStorage.getItem('currentStudent')] || localStorage.getItem('currentStudent');
+    if(mapped) { setTimeout(function(){ setStudent(mapped); }, 1500); return; }
+  }
   currentStudent = '';
   document.querySelectorAll('.stu-btn').forEach(function(b){ b.classList.remove('active'); });
   // Pulsar todos los botones de estudiante para llamar la atención
@@ -1642,7 +1657,7 @@ function renderJornadas(filter) {
 }
 
 var _stuInforme = '';
-var _avatarMap = {'Miguel Pérez':'🧑','Catalina Vergara':'👩','Leonel Pradines':'🧑‍🎓','Control':'🎓'};
+var _avatarMap = {'Miguel Pérez':'🧑','Catalina Vergara':'👩','Leonel Pradines':'🧑‍🎓','Administrador':'🎓'};
 
 function buildJornadaSelector() {
   var el = document.getElementById('jornada-selector');
@@ -4088,10 +4103,19 @@ var LISTA_JUEGOS = {
 
 function adminMostrar() {
   var esAdmin = currentStudent === 'Administrador';
+  // Panel admin (solo Administrador)
   document.getElementById('admin-sep').style.display = esAdmin ? 'block' : 'none';
   document.getElementById('admin-lbl').style.display = esAdmin ? 'block' : 'none';
   document.getElementById('admin-btn-stats').style.display = esAdmin ? 'block' : 'none';
   document.getElementById('admin-btn-users').style.display = esAdmin ? 'block' : 'none';
+  // Tabla de avance (solo Administrador)
+  var sepAv = document.getElementById('sep-avance');
+  var lblAv = document.getElementById('lbl-avance');
+  var btnAv = document.getElementById('btn-avance');
+  if(sepAv) sepAv.style.display = esAdmin ? 'block' : 'none';
+  if(lblAv) lblAv.style.display = esAdmin ? 'block' : 'none';
+  if(btnAv) btnAv.style.display = esAdmin ? 'block' : 'none';
+  // ADMIN_ESTUDIANTES solo muestra los 3 estudiantes (no al administrador)
 }
 
 function adminRenderStats() {
