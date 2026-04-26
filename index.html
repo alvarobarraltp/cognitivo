@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0049)file:///Users/alvarobarra/Downloads/index_20.html -->
+<!-- saved from url=(0049)file:///Users/alvarobarra/Downloads/index_22.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -251,18 +251,18 @@
           <input type="password" id="password" placeholder="Tu RUT" autocomplete="off">
         </div>
 
-        <button type="submit" class="btn">Ingresar</button>
+        <button type="submit" class="btn" id="btn-ingresar">Ingresar</button>
+        <button type="button" class="btn" id="btn-continuar" style="display:none;background:linear-gradient(135deg,var(--morado),var(--azul));" onclick="window.location.href=&#39;./ejercicios_memoria.html&#39;">▶ Continuar al sistema</button>
         
-        <details style="margin-top:1.2rem;">
-          <summary style="cursor:pointer;font-size:0.8rem;color:var(--texto2);user-select:none;">⚙️ Configuración avanzada (Administrador)</summary>
-          <div style="margin-top:1rem;padding:1rem;background:var(--surface2);border-radius:10px;border:1px solid var(--border);">
-            <label style="font-size:0.8rem;color:var(--texto2);display:block;margin-bottom:0.5rem;">🔑 JSONBin API Key (X-Master-Key)</label>
-            <input type="password" id="apikey" placeholder="$2a$10$..." style="width:100%;padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--texto);font-size:0.85rem;font-family:monospace;" autocomplete="off">
-            <p style="font-size:0.72rem;color:var(--texto2);margin-top:0.5rem;">Obtén tu clave en <a href="https://jsonbin.io/app/api-keys" target="_blank" style="color:var(--azul);">jsonbin.io/app/api-keys</a></p>
-            <button type="button" onclick="guardarApiKey()" style="margin-top:0.8rem;width:100%;padding:8px;background:var(--morado);border:none;border-radius:8px;color:white;font-size:0.85rem;font-weight:700;cursor:pointer;">💾 Guardar clave</button>
-            <p id="apikey-status" style="font-size: 0.75rem; margin-top: 0.5rem; color: var(--verde); display: block;">✅ Clave guardada</p>
-          </div>
-        </details>
+        <!-- Panel Admin: solo visible después de validar como Administrador -->
+        <div id="admin-config" style="display:none;margin-top:1.2rem;padding:1rem;background:var(--surface2);border-radius:10px;border:1px solid var(--morado);">
+          <div style="font-size:0.8rem;font-weight:800;color:var(--morado);margin-bottom:0.8rem;">⚙️ Configuración Administrador</div>
+          <label style="font-size:0.8rem;color:var(--texto2);display:block;margin-bottom:0.5rem;">🔑 JSONBin API Key (X-Master-Key)</label>
+          <input type="password" id="apikey" placeholder="$2a$10$..." style="width:100%;padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--texto);font-size:0.85rem;font-family:monospace;" autocomplete="off">
+          <p style="font-size:0.72rem;color:var(--texto2);margin-top:0.5rem;">Obtén tu clave en <a href="https://jsonbin.io/app/api-keys" target="_blank" style="color:var(--azul);">jsonbin.io/app/api-keys</a></p>
+          <button type="button" onclick="guardarApiKey()" style="margin-top:0.8rem;width:100%;padding:8px;background:var(--morado);border:none;border-radius:8px;color:white;font-size:0.85rem;font-weight:700;cursor:pointer;">💾 Guardar clave</button>
+          <p id="apikey-status" style="font-size:0.75rem;margin-top:0.5rem;color:var(--verde);display:none;">✅ Clave guardada</p>
+        </div>
         
         <div class="demo-hint">
           <strong>👤 Estudiantes Registrados:</strong>
@@ -283,21 +283,38 @@
       'Administrador': { nombre: 'Administrador', password: '77633333' }
     };
     
-    // Cargar API key guardada
-    const savedKey = localStorage.getItem('jsonbin_api_key');
-    if(savedKey) {
-      const apikeyInput = document.getElementById('apikey');
-      if(apikeyInput) apikeyInput.value = savedKey;
-      document.getElementById('apikey-status').style.display = 'block';
-    }
-    
     function guardarApiKey() {
       const key = document.getElementById('apikey').value.trim();
       if(key) {
         localStorage.setItem('jsonbin_api_key', key);
-        document.getElementById('apikey-status').style.display = 'block';
+        const status = document.getElementById('apikey-status');
+        status.textContent = '✅ Clave guardada correctamente';
+        status.style.display = 'block';
+        // Auto-continuar después de 1.5s
+        setTimeout(function() {
+          window.location.href = './ejercicios_memoria.html';
+        }, 1500);
       }
     }
+    
+    // Auto-guardar al escribir en el campo (con debounce)
+    document.addEventListener('DOMContentLoaded', function() {
+      var apikeyInput = document.getElementById('apikey');
+      if(apikeyInput) {
+        var t;
+        apikeyInput.addEventListener('input', function() {
+          clearTimeout(t);
+          t = setTimeout(function() {
+            var k = apikeyInput.value.trim();
+            if(k.length > 20) {
+              localStorage.setItem('jsonbin_api_key', k);
+              document.getElementById('apikey-status').textContent = '✅ Clave guardada automáticamente';
+              document.getElementById('apikey-status').style.display = 'block';
+            }
+          }, 800);
+        });
+      }
+    });
 
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
@@ -316,14 +333,34 @@
       }
       
       if(usuarios[rut] && usuarios[rut].password === password) {
-        localStorage.setItem('currentStudent', usuarios[rut].nombre);
-        window.location.href = './ejercicios_memoria.html';
+        const nombre = usuarios[rut].nombre;
+        localStorage.setItem('currentStudent', nombre);
+        
+        // Si es administrador, mostrar config antes de redirigir
+        if(nombre === 'Administrador') {
+          const panel = document.getElementById('admin-config');
+          if(panel) panel.style.display = 'block';
+          // Cargar API key guardada
+          const savedKey = localStorage.getItem('jsonbin_api_key');
+          if(savedKey) {
+            document.getElementById('apikey').value = savedKey;
+            document.getElementById('apikey-status').style.display = 'block';
+          }
+          // Mostrar boton de continuar
+          document.getElementById('btn-continuar').style.display = 'block';
+          document.getElementById('btn-ingresar').style.display = 'none';
+        } else {
+          window.location.href = './ejercicios_memoria.html';
+        }
       } else {
         errorMsg.textContent = '❌ RUT o contraseña incorrectos';
         errorMsg.classList.add('show');
         document.getElementById('password').value = '';
       }
     });
+    
+    // Pre-cargar API key fija
+    localStorage.setItem('jsonbin_api_key', '$2a$10$aN/wdIxgIPOfUKLfmp6oHuZuelJlkbFPWswWLQRF/kM0EwBCiy5Gy');
     
     // Enter en password = submit
     document.getElementById('password').addEventListener('keypress', function(e) {
