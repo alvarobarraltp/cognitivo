@@ -1411,10 +1411,10 @@ var STU_IDS = ['stu-0', 'stu-1', 'stu-2', 'stu-3'];
 // Leonel: configuración base (sin ajustes especiales)
 var COMPLEXITY = {
   'Miguel Pérez': {
-    g1MinColors: 4,   // Colores: parte con 4 colores en la secuencia
-    g2MinDigs:   6,   // Números: parte desde 6 dígitos
-    g3MinImages: 3,   // Imágenes: mínimo 3 imágenes por ronda
-    g4Levels:    true // Pares: tiene niveles de dificultad
+    g1MinColors: 4,
+    g2MinDigs:   6,
+    g3MinImages: 3,
+    g4Levels:    true
   },
   'Catalina Vergara': {
     g1MinColors: 4,
@@ -1426,13 +1426,19 @@ var COMPLEXITY = {
     g1MinColors: 1,
     g2MinDigs:   3,
     g3MinImages: 3,
-    g4Levels:    false
+    g4Levels:    true
+  },
+  'Administrador': {
+    g1MinColors: 4,
+    g2MinDigs:   6,
+    g3MinImages: 3,
+    g4Levels:    true
   },
   'Control': {
     g1MinColors: 1,
     g2MinDigs:   3,
     g3MinImages: 3,
-    g4Levels:    false
+    g4Levels:    true
   }
 };
 
@@ -1449,7 +1455,9 @@ var G4_NIVEL_CONFIG = [
 ];
 
 function getComplex() {
-  return COMPLEXITY[currentStudent] || COMPLEXITY['Leonel Pradines'];
+  return COMPLEXITY[currentStudent] || {
+    g1MinColors: 1, g2MinDigs: 3, g3MinImages: 3, g4Levels: true
+  };
 }
 
 function getG4NivelActual() {
