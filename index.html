@@ -1038,7 +1038,7 @@
       <div class="card-title">🖼️ Orden de imágenes</div>
       <div class="card-desc">Se mostrarán imágenes una por una. Luego debes recordar el orden exacto y hacer clic en ellas en el mismo orden en que aparecieron.</div>
       <div class="stats">
-        <div class="stat">Ronda <span id="g3-rnd">1</span>/6</div>
+        <div class="stat">Ronda <span id="g3-rnd">1</span>/12</div>
         <div class="stat">Puntos <span id="g3-pts">0</span></div>
       </div>
       <div id="g3-show-area" style="display:flex;align-items:center;justify-content:center;min-height:260px;margin:1.2rem 0;">
@@ -1547,7 +1547,7 @@ function loadStudentProgress() {
   g3.rnd  = g3d.rnd  || 0;
   g3.pts  = g3d.pts  || 0;
   g3.answer = []; g3.seq = [];
-  document.getElementById('g3-rnd').textContent   = Math.min(g3.rnd+1, 6);
+  document.getElementById('g3-rnd').textContent   = Math.min(g3.rnd+1, 12);
   document.getElementById('g3-pts').textContent   = g3.pts;
   document.getElementById('g3-img-disp').textContent = '—';
   document.getElementById('g3-choose').style.display = 'none';
@@ -1791,12 +1791,12 @@ function renderAvance() {
     };
     tbody.innerHTML += '<tr>' +
       '<td>' + st + (st===currentStudent ? ' <span style="font-size:0.75rem;background:var(--azul);color:white;padding:1px 7px;border-radius:10px;">activo</span>' : '') + '</td>' +
-      '<td><span class="nivel-badge ' + nivelClass(g1d.nivel,10) + '">Niv. ' + (g1d.nivel||1) + '</span><br>' + ptsBar(g1d.pts) + '<br><small>' + (g1d.pts||0) + ' pts</small></td>' +
-      '<td><span class="nivel-badge ' + nivelClass(g2d.digs,9) + '">' + (g2d.digs||3) + ' díg.</span><br>' + ptsBar(g2d.pts) + '<br><small>' + (g2d.pts||0) + ' pts</small></td>' +
-      '<td><span class="nivel-badge ' + nivelClass(g3d.rnd,6) + '">Ronda ' + Math.min((g3d.rnd||0)+1,6) + '</span><br>' + ptsBar(g3d.pts) + '<br><small>' + (g3d.pts||0) + ' pts</small></td>' +
+      '<td><span class="nivel-badge ' + nivelClass(g1d.nivel,20) + '">Niv. ' + (g1d.nivel||1) + '</span><br>' + ptsBar(g1d.pts) + '<br><small>' + (g1d.pts||0) + ' pts</small></td>' +
+      '<td><span class="nivel-badge ' + nivelClass(g2d.digs,15) + '">' + (g2d.digs||3) + ' díg.</span><br>' + ptsBar(g2d.pts) + '<br><small>' + (g2d.pts||0) + ' pts</small></td>' +
+      '<td><span class="nivel-badge ' + nivelClass(g3d.rnd,12) + '">Ronda ' + Math.min((g3d.rnd||0)+1,6) + '</span><br>' + ptsBar(g3d.pts) + '<br><small>' + (g3d.pts||0) + ' pts</small></td>' +
       '<td>' + (g4d.bestMoves ? '<span class="nivel-badge nb-3">'+g4d.bestMoves+' mov.</span>' : '<span class="nivel-badge nb-0">—</span>') + '<br><small>' + G4_NIVEL_CONFIG[Math.min(g4d.g4nivel||0,G4_NIVEL_CONFIG.length-1)].label + '</small><br><small>' + (g4d.games||0) + ' partidas</small></td>' +
-      '<td><span class="nivel-badge ' + nivelClass(g5d.niv,6) + '">Niv. ' + (g5d.niv||1) + '</span><br><small>Racha: ' + (g5d.bestRacha||0) + '</small></td>' +
-      '<td>' + (p.ryr ? '<span class="nivel-badge '+(p.ryr.nivel>=6?'nb-3':p.ryr.nivel>=4?'nb-2':'nb-1')+'">Niv. '+(p.ryr.nivel||3)+'</span><br><small>'+(p.ryr.pts||0)+' pts</small>' : '<span class="nivel-badge nb-0">—</span>') + '</td>' +
+      '<td><span class="nivel-badge ' + nivelClass(g5d.niv,15) + '">Niv. ' + (g5d.niv||1) + '</span><br><small>Racha: ' + (g5d.bestRacha||0) + '</small></td>' +
+      '<td>' + (p.ryr ? '<span class="nivel-badge '+(p.ryr.nivel>=10?'nb-3':p.ryr.nivel>=6?'nb-2':'nb-1')+'">Niv. '+(p.ryr.nivel||3)+'</span><br><small>'+(p.ryr.pts||0)+' pts</small>' : '<span class="nivel-badge nb-0">—</span>') + '</td>' +
       '<td class="last-played">' + (p.lastSeen || '—') + '</td>' +
     '</tr>';
   });
@@ -2349,7 +2349,7 @@ function g1click(idx) {
       document.getElementById('g1-rec').textContent = g1.rec;
       recordStat('g1', {nivel:g1.nivel, pts:g1.pts, rec:g1.rec});
       // Nivel máximo superado → subir ciclo
-      if(g1.nivel >= 10) {
+      if(g1.nivel >= 20) {
         var p1 = getProgress(currentStudent);
         var ciclo = ((p1.g1 || {}).ciclo || 0) + 1;
         recordStat('g1', {nivel:1, pts:g1.pts, rec:g1.rec, ciclo:ciclo});
@@ -2435,7 +2435,7 @@ function g2Check() {
   document.getElementById('g2-int').textContent = g2.intentos;
   if(v === g2.num) {
     g2.pts += g2.digs * 15;
-    g2.digs = Math.min(g2.digs+1, 9);
+    g2.digs = Math.min(g2.digs+1, 15);
     g2.intentos = 0;
     document.getElementById('g2-digs').textContent = g2.digs;
     document.getElementById('g2-pts').textContent = g2.pts;
@@ -2507,10 +2507,10 @@ var g3Banco = [
 // g3Rondas now computed per-student
 function g3GetRondasConfig() {
   var min = getComplex().g3MinImages;
-  // Generate 6 progressive rounds starting from min
+  // 12 rondas progresivas con hasta 16 imágenes
   var rounds = [];
-  for(var ri=0; ri<6; ri++) {
-    rounds.push(Math.min(min + ri, 8));
+  for(var ri=0; ri<12; ri++) {
+    rounds.push(Math.min(min + ri, 16));
   }
   return rounds;
 }
@@ -2646,7 +2646,7 @@ function g3Check() {
     g3.pts += g3.seq.length * 20;
     g3.rnd++;
     document.getElementById('g3-pts').textContent = g3.pts;
-    document.getElementById('g3-rnd').textContent = Math.min(g3.rnd+1, 6);
+    document.getElementById('g3-rnd').textContent = Math.min(g3.rnd+1, 12);
     recordStat('g3', {rnd:g3.rnd, pts:g3.pts});
     // Máximo alcanzado → nuevo ciclo con más imágenes
     if(g3.rnd >= g3Rondas.length) {
@@ -2678,7 +2678,7 @@ function g3Check() {
       var _nombre3 = currentStudent.split(' ')[0];
       fallarDesafio('¡Ajustando el nivel!', adaptMsgBajar(_nombre3));
       setFb('g3-fb', '⬇ Volvemos a la ronda ' + (g3.rnd+1) + ' para ganar confianza. ¡Tú puedes!', 'info');
-      document.getElementById('g3-rnd').textContent = Math.min(g3.rnd+1,6);
+      document.getElementById('g3-rnd').textContent = Math.min(g3.rnd+1,12);
     } else {
       setFb('g3-fb', 'El orden correcto era: ' + correctaStr + '. ¡Inténtalo de nuevo!', 'err');
     }
@@ -2821,12 +2821,26 @@ function g4Flip(id) {
 
 // ======= JUEGO 5: CADENA NUMÉRICA =======
 var g5Patrones = [
+  // Nivel 1-3: patrones simples de 4 elementos
   function(n){ return [n, n+2, n+4, n+6]; },
   function(n){ return [n, n+3, n+6, n+9]; },
-  function(n){ return [n, n*2, n*4, n*8]; },
   function(n){ return [n, n+5, n+10, n+15]; },
+  // Nivel 4-6: patrones de multiplicación
+  function(n){ return [n, n*2, n*4, n*8]; },
   function(n){ return [n, n-2, n-4, n-6]; },
   function(n){ return [n, n+1, n+3, n+6, n+10]; },
+  // Nivel 7-9: patrones de 5 elementos
+  function(n){ return [n, n+2, n+4, n+6, n+8]; },
+  function(n){ return [n, n*2, n*3, n*4, n*5]; },
+  function(n){ return [n, n+4, n+8, n+12, n+16]; },
+  // Nivel 10-12: patrones de 6 elementos
+  function(n){ return [n, n+3, n+6, n+9, n+12, n+15]; },
+  function(n){ return [n, n*2, n*4, n*8, n*16, n*32]; },
+  function(n){ return [n, n+1, n+3, n+6, n+10, n+15]; },
+  // Nivel 13+: patrones mixtos avanzados
+  function(n){ return [n, n+2, n+5, n+9, n+14, n+20]; },
+  function(n){ return [n, n*2, n*2+1, n*4, n*4+1, n*8]; },
+  function(n){ return [n, n+n, n+n+n, n*4, n*5, n*6]; },
 ];
 var g5 = { niv:1, pts:0, racha:0, correcto:0, opciones:[] };
 function g5Start() {
@@ -2872,7 +2886,7 @@ function g5Responder(v, btn) {
     g5.pts += g5.niv * 15;
     g5.racha++;
     adaptRegistrarAcierto('g5');
-    if(g5.racha % 3 === 0) g5.niv = Math.min(g5.niv+1, g5Patrones.length);
+    if(g5.racha % 3 === 0) g5.niv++;
     document.getElementById('g5-niv').textContent = g5.niv;
     document.getElementById('g5-pts').textContent = g5.pts;
     document.getElementById('g5-rach').textContent = g5.racha;
@@ -4571,14 +4585,16 @@ function p14GetExtra(prog, info) {
 // ─── Detectar si estudiante está en nivel máximo ───
 function detectarNivelMaximo(prog) {
   var maximos = [];
-  if(prog.g1 && prog.g1.nivel >= 10)
-    maximos.push('🎨 Colores (Nivel 10)');
-  if(prog.g2 && prog.g2.digs >= 9)
-    maximos.push('🔢 Números (9 dígitos)');
-  if(prog.g3 && prog.g3.rnd >= 5)
-    maximos.push('🖼️ Imágenes (Ronda 6)');
-  if(prog.g4 && prog.g4.g4nivel >= 4)
-    maximos.push('🃏 Pares (Nivel 5)');
+  if(prog.g1 && prog.g1.nivel >= 20)
+    maximos.push('🎨 Colores (Nivel 20)');
+  if(prog.g2 && prog.g2.digs >= 15)
+    maximos.push('🔢 Números (15 dígitos)');
+  if(prog.g3 && prog.g3.rnd >= 11)
+    maximos.push('🖼️ Imágenes (Ronda 12)');
+  if(prog.g4 && prog.g4.g4nivel >= 7)
+    maximos.push('🃏 Pares (Nivel 8)');
+  if(prog.g5 && prog.g5.niv >= 15)
+    maximos.push('🔗 Cadena (Nivel 15+)');
   return maximos;
 }
 function renderPanelInicio(forzarStudent) {
