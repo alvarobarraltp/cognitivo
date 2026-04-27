@@ -1240,6 +1240,9 @@
       </div>
     </div>
 
+    <!-- Logros máximo -->
+    <div id="p14-logros"></div>
+
     <!-- Tarjetas resumen -->
     <div id="p14-resumen" style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.8rem;margin-bottom:1.5rem;"></div>
 
@@ -1440,6 +1443,9 @@ var G4_NIVEL_CONFIG = [
   { pares: 8,  label: 'Nivel 3 (8 pares)',  objetivo: 16 },
   { pares: 10, label: 'Nivel 4 (10 pares)', objetivo: 20 },
   { pares: 12, label: 'Nivel 5 (12 pares)', objetivo: 24 },
+  { pares: 14, label: '🏆 Nivel 6 (14 pares)', objetivo: 28 },
+  { pares: 16, label: '🏆 Nivel 7 (16 pares)', objetivo: 32 },
+  { pares: 18, label: '🏆 Nivel 8 (18 pares)', objetivo: 36 },
 ];
 
 function getComplex() {
@@ -2334,6 +2340,17 @@ function g1click(idx) {
       document.getElementById('g1-pts').textContent = g1.pts;
       document.getElementById('g1-rec').textContent = g1.rec;
       recordStat('g1', {nivel:g1.nivel, pts:g1.pts, rec:g1.rec});
+      // Nivel máximo superado → subir ciclo
+      if(g1.nivel >= 10) {
+        var p1 = getProgress(currentStudent);
+        var ciclo = ((p1.g1 || {}).ciclo || 0) + 1;
+        recordStat('g1', {nivel:1, pts:g1.pts, rec:g1.rec, ciclo:ciclo});
+        g1.nivel = 1;
+        celebrarLogro('🏆 ¡Ciclo ' + ciclo + ' completado!',
+          currentStudent.split(' ')[0] + ' dominó los 10 niveles. ¡Nuevo ciclo con más colores!');
+        var cx1 = COMPLEXITY[currentStudent] || COMPLEXITY['Leonel Pradines'];
+        cx1.g1MinColors = Math.min((cx1.g1MinColors || 4) + 1, 8);
+      }
       adaptRegistrarAcierto('g1');
       setInactive(true);
       var _isLevelMilestone = g1.nivel % 3 === 1 && g1.nivel > 1;
@@ -2623,6 +2640,15 @@ function g3Check() {
     document.getElementById('g3-pts').textContent = g3.pts;
     document.getElementById('g3-rnd').textContent = Math.min(g3.rnd+1, 6);
     recordStat('g3', {rnd:g3.rnd, pts:g3.pts});
+    // Máximo alcanzado → nuevo ciclo con más imágenes
+    if(g3.rnd >= g3Rondas.length) {
+      var p3 = getProgress(currentStudent);
+      var ciclo3 = ((p3.g3 || {}).ciclo || 0) + 1;
+      recordStat('g3', {rnd:0, pts:g3.pts, ciclo:ciclo3});
+      g3.rnd = 0;
+      celebrarLogro('🏆 ¡Ciclo ' + ciclo3 + ' completado!',
+        currentStudent.split(' ')[0] + ' dominó todas las rondas. ¡Nuevo ciclo con más imágenes!');
+    }
     if(g3.rnd % 2 === 0 && g3.rnd > 0) {
       celebrarLogro('¡Ronda ' + g3.rnd + ' superada!', '¡' + currentStudent.split(' ')[0] + ' recuerda ' + g3.seq.length + ' imágenes en orden!');
     } else {
@@ -2654,7 +2680,7 @@ function g3Check() {
 }
 
 // ======= JUEGO 4: PARES =======
-var G4_EMOJIS = ['🍎','🐱','⭐','🚀','🌸','🎵','🏠','🌙','🐶','🎯','🍌','🔥'];
+var G4_EMOJIS = ['🍎','🐱','⭐','🚀','🌸','🎵','🏠','🌙','🐶','🎯','🍌','🔥','🦁','🐘','🦋','🌈','🎸','🏆'];
 var g4 = { cards:[], flipped:[], matched:0, moves:0, pts:0, locked:false, pares:4 };
 
 function g4GetPares() {
@@ -2670,6 +2696,8 @@ function g4GetCols(pares) {
   if(pares <= 6) return 4;
   if(pares <= 8) return 4;
   if(pares <= 10) return 5;
+  if(pares <= 12) return 6;
+  if(pares <= 16) return 6;
   return 6;
 }
 
@@ -2686,10 +2714,11 @@ function g4Init() {
   // Show nivel info
   var cx = getComplex();
   var nivelIdx = cx.g4Levels ? getG4NivelActual() : 0;
+  var cfg4 = G4_NIVEL_CONFIG[Math.min(nivelIdx, G4_NIVEL_CONFIG.length-1)];
   var p = getProgress(currentStudent); var g4d = p.g4||{};
   var bestPrev = g4d.bestMoves || null;
   var nivelInfo = cx.g4Levels
-    ? cfg.label + ' · ' + cfg.pares + ' pares' + (bestPrev ? ' · mejor: '+bestPrev+' mov.' : '')
+    ? cfg4.label + ' · ' + cfg4.pares + ' pares' + (bestPrev ? ' · mejor: '+bestPrev+' mov.' : '')
     : '4 pares (nivel base)';
   document.getElementById('g4-nivel-info').textContent = nivelInfo;
 
@@ -2741,53 +2770,32 @@ function g4Flip(id) {
         var games = (pg4.games||0)+1;
         var cx = getComplex();
         var nivelIdx = cx.g4Levels ? getG4NivelActual() : 0;
-        var cfg = G4_NIVEL_CONFIG[nivelIdx];
-        var objetivo = cfg.objetivo;
+        var cfg = G4_NIVEL_CONFIG[Math.min(nivelIdx, G4_NIVEL_CONFIG.length-1)];
+        var objetivo = cfg ? cfg.objetivo : 99;
         var msg = '¡Completaste '+g4.pares+' pares en '+g4.moves+' movimientos!';
+        // SIEMPRE sube de nivel al completar todos los pares
         var newNivel = nivelIdx;
-        if(cx.g4Levels && nivelIdx < G4_NIVEL_CONFIG.length-1) {
-          // Superó el objetivo → sube de nivel
+        var esMaximo = nivelIdx >= G4_NIVEL_CONFIG.length - 1;
+        if(cx.g4Levels && !esMaximo) {
           newNivel = nivelIdx + 1;
-          msg += ' 🎉 ¡Subiste al ' + G4_NIVEL_CONFIG[newNivel].label + '!';
-        } else if(cx.g4Levels && nivelIdx === G4_NIVEL_CONFIG.length-1) {
-          // Nivel máximo
-          msg += ' 🏆 ¡Nivel máximo alcanzado!';
-        } else if(cx.g4Levels) {
-          // siempre sube de nivel al completar
         }
         recordStat('g4', {bestMoves:bm, games:games, pts:g4.pts, g4nivel:newNivel});
+        adaptRegistrarAcierto('g4');
         var _stu4 = currentStudent;
-        if(newNivel > nivelIdx) {
-          adaptRegistrarAcierto('g4');
-          celebrarLogro('¡Subiste de nivel en Pares!', '¡' + currentStudent.split(' ')[0] + ' pasó al ' + G4_NIVEL_CONFIG[newNivel].label + '! 🃏');
-          setFb('g4-fb', msg, 'ok');
-          document.getElementById('g4-btn').textContent = '▶ Siguiente nivel (' + G4_NIVEL_CONFIG[newNivel].label + ')';
-          document.getElementById('g4-btn').style.display = 'inline-block';
-          document.getElementById('g4-btn').onclick = function(){ continuarConEstudiante(_stu4, g4Init); };
-        } else if(nivelIdx === G4_NIVEL_CONFIG.length-1) {
-          // Nivel máximo — sigue jugando sin bajar
-          adaptRegistrarAcierto('g4');
-          celebrarPasoOk('¡Nivel máximo!', g4.pares + ' pares completados. ¡Increíble memoria!');
-          setFb('g4-fb', msg, 'ok');
-          document.getElementById('g4-btn').textContent = '▶ Jugar de nuevo';
+        if(!esMaximo) {
+          celebrarLogro('🃏 ¡Subiste al ' + G4_NIVEL_CONFIG[newNivel].label + '!',
+            currentStudent.split(' ')[0] + ' completó ' + g4.pares + ' pares en ' + g4.moves + ' movimientos.');
+          setFb('g4-fb', msg + ' ¡Subiste al ' + G4_NIVEL_CONFIG[newNivel].label + '!', 'ok');
+          document.getElementById('g4-btn').textContent = '▶ Siguiente nivel';
           document.getElementById('g4-btn').style.display = 'inline-block';
           document.getElementById('g4-btn').onclick = function(){ continuarConEstudiante(_stu4, g4Init); };
         } else {
-          // No superó el objetivo — intenta de nuevo en el mismo nivel
-          var _ajustar4 = adaptRegistrarError('g4');
-          if(_ajustar4 && nivelIdx > 0) {
-            newNivel = nivelIdx - 1;
-            var _nombre4 = currentStudent.split(' ')[0];
-            fallarDesafio('¡Ajustando el nivel!', adaptMsgBajar(_nombre4));
-            msg = '⬇ Bajamos al ' + G4_NIVEL_CONFIG[newNivel].label + ' para recuperar confianza.';
-            recordStat('g4', {bestMoves:bm, games:games, pts:g4.pts, g4nivel:newNivel});
-          } else {
-            fallarDesafio('¡Casi!', 'Objetivo: ≤'+objetivo+' movimientos. Tú usaste '+g4.moves+'. ¡Inténtalo de nuevo!');
-          }
-          setFb('g4-fb', msg, cx.g4Levels ? 'err' : 'ok');
-          desactivarEstudiante();
-          document.getElementById('g4-btn').textContent = '↩ Intentar de nuevo';
+          celebrarLogro('🏆 ¡Nivel máximo!',
+            currentStudent.split(' ')[0] + ' completó ' + g4.pares + ' pares. ¡Memoria increíble!');
+          setFb('g4-fb', '🏆 ¡Nivel máximo! ' + msg, 'ok');
+          document.getElementById('g4-btn').textContent = '▶ Jugar de nuevo';
           document.getElementById('g4-btn').style.display = 'inline-block';
+          document.getElementById('g4-btn').onclick = function(){ continuarConEstudiante(_stu4, g4Init); };
         }
       }
     } else {
@@ -4551,6 +4559,20 @@ function p14GetExtra(prog, info) {
   if(info.extra==='niv')   return 'Nivel '+v;
   return String(v);
 }
+
+// ─── Detectar si estudiante está en nivel máximo ───
+function detectarNivelMaximo(prog) {
+  var maximos = [];
+  if(prog.g1 && prog.g1.nivel >= 10)
+    maximos.push('🎨 Colores (Nivel 10)');
+  if(prog.g2 && prog.g2.digs >= 9)
+    maximos.push('🔢 Números (9 dígitos)');
+  if(prog.g3 && prog.g3.rnd >= 5)
+    maximos.push('🖼️ Imágenes (Ronda 6)');
+  if(prog.g4 && prog.g4.g4nivel >= 4)
+    maximos.push('🃏 Pares (Nivel 5)');
+  return maximos;
+}
 function renderPanelInicio(forzarStudent) {
   var stu = forzarStudent || currentStudent;
   if(!stu) {
@@ -4568,6 +4590,19 @@ function renderPanelInicio(forzarStudent) {
   if(nmEl) nmEl.textContent = NOMBRES_COMPLETOS[stu] || stu;
   var ulEl = document.getElementById('p14-ultima');
   if(ulEl) ulEl.textContent = prog.lastSeen ? '🕐 Última sesión: ' + prog.lastSeen : '¡Primera sesión!';
+  // Mostrar logros de nivel máximo
+  var maximos = detectarNivelMaximo(prog);
+  var logrosEl = document.getElementById('p14-logros');
+  if(logrosEl) {
+    if(maximos.length > 0) {
+      logrosEl.innerHTML = '<div style="background:linear-gradient(135deg,rgba(252,211,77,0.15),rgba(74,222,128,0.15));border:1.5px solid var(--amarillo);border-radius:10px;padding:0.8rem;margin-bottom:1rem;">' +
+        '<span style="font-weight:800;color:var(--amarillo);">🏆 Nivel máximo alcanzado en:</span><br>' +
+        maximos.map(function(m){return '<span style="color:var(--verde);">✓ '+m+'</span>';}).join(' · ') +
+        '</div>';
+    } else {
+      logrosEl.innerHTML = '';
+    }
+  }
 
   // Calcular totales
   var totalPts = 0, ejerciciosActivos = 0;
