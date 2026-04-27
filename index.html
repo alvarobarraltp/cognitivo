@@ -1770,38 +1770,69 @@ function recordStat(game, fields) {
 // ======= TABLA DE AVANCE =======
 var _jornadaFilter = 'all';
 
-// Cargar datos de todos los estudiantes desde JSONBin para el admin
+// Cargar datos de TODOS los estudiantes desde JSONBin para el admin
 function cargarDatosAdmin() {
   if(currentStudent !== 'Administrador') return;
   var estudiantes = ['Miguel Pérez', 'Catalina Vergara', 'Leonel Pradines'];
-  estudiantes.forEach(function(est) {
-    jbLoad(est, function(cloudData) {
-      if(cloudData && typeof cloudData === 'object' && Object.keys(cloudData).length > 0) {
-        // Fusionar con datos locales (nube tiene prioridad)
-        var local = getProgress(est) || {};
-        var merged = Object.assign({}, local);
-        Object.keys(cloudData).forEach(function(k) {
-          if(cloudData[k] !== null && cloudData[k] !== undefined) {
-            if(typeof cloudData[k] === 'object' && typeof merged[k] === 'object' && merged[k] !== null) {
-              // Fusionar objetos conservando máximos
-              Object.keys(cloudData[k]).forEach(function(sk) {
-                if(typeof cloudData[k][sk] === 'number' && typeof merged[k][sk] === 'number') {
-                  merged[k][sk] = Math.max(merged[k][sk], cloudData[k][sk]);
-                } else {
-                  merged[k][sk] = cloudData[k][sk];
-                }
-              });
-            } else {
-              merged[k] = cloudData[k];
-            }
+  var pendientes = estudiantes.length;
+  var cargados = 0;
+
+  function fusionar(est, cloudData) {
+    if(!cloudData || typeof cloudData !== 'object' || !Object.keys(cloudData).length) return;
+    var local = getProgress(est) || {};
+    var merged = Object.assign({}, local);
+    Object.keys(cloudData).forEach(function(k) {
+      if(cloudData[k] === null || cloudData[k] === undefined) return;
+      if(typeof cloudData[k] === 'object' && merged[k] && typeof merged[k] === 'object') {
+        Object.keys(cloudData[k]).forEach(function(sk) {
+          if(typeof cloudData[k][sk] === 'number' && typeof merged[k][sk] === 'number') {
+            merged[k][sk] = Math.max(merged[k][sk], cloudData[k][sk]);
+          } else {
+            merged[k][sk] = cloudData[k][sk];
           }
         });
-        localStorage.setItem('mem_prog_' + est, JSON.stringify(merged));
+      } else {
+        merged[k] = cloudData[k];
       }
     });
+    localStorage.setItem('mem_prog_' + est, JSON.stringify(merged));
+    cargados++;
+  }
+
+  function done() {
+    pendientes--;
+    if(pendientes === 0) {
+      // Todos cargados → actualizar tabla
+      setTimeout(function() {
+        renderAvance();
+        adminRenderStats();
+      }, 100);
+    }
+  }
+
+  estudiantes.forEach(function(est) {
+    // Intentar cargar con bin ID conocido localmente
+    var binId = jbGetBinId(est);
+    if(binId) {
+      jbLoad(est, function(data) {
+        fusionar(est, data);
+        done();
+      });
+    } else {
+      // Sin bin ID local → buscar en índice maestro
+      jbLoadMaster(function(mapping) {
+        if(mapping && mapping[est]) {
+          jbSetBinId(est, mapping[est]);
+          jbLoad(est, function(data) {
+            fusionar(est, data);
+            done();
+          });
+        } else {
+          done();
+        }
+      });
+    }
   });
-  // Re-renderizar después de cargar
-  setTimeout(function() { renderAvance(); }, 1500);
 }
 
 function renderAvance() {
@@ -4511,7 +4542,50 @@ var JSONBIN_BASE = 'https://api.jsonbin.io/v3/b';
 (function() {
   var k = localStorage.getItem('jsonbin_api_key');
   if(k) JSONBIN_KEY = k;
+  
+  // Pre-cargar bin IDs conocidos para evitar duplicados
+  var BINS_FIJOS = {
+    'Miguel_Pérez':      '69efad3aaaba882197442ec2',
+    'Administrador':     '69efad86aaba88219744303a',
+    'Catalina_Vergara':  '69efb30936566621a8faa34f',
+    'Leonel_Pradines':   '69efb321aaba882197445089'
+  };
+  // Forzar siempre los IDs correctos
+  Object.keys(BINS_FIJOS).forEach(function(key) {
+    localStorage.setItem('jb_bin_' + key, BINS_FIJOS[key]);
+  });
 })();
+
+// Al iniciar: buscar bins de todos los estudiantes en JSONBin
+function jbBuscarTodosLosBins() {
+  if(!JSONBIN_KEY) return;
+  fetch('https://api.jsonbin.io/v3/b?meta=true', {
+    headers: jbHeaders()
+  }).then(function(r){ return r.json(); })
+  .then(function(bins){
+    if(!Array.isArray(bins)) return;
+    var estudiantes = ['Miguel Pérez','Catalina Vergara','Leonel Pradines','Administrador'];
+    bins.forEach(function(b) {
+      if(!b.metadata || !b.metadata.name) return;
+      var nombre = b.metadata.name; // ej: cognitivo_Miguel_Pérez
+      estudiantes.forEach(function(est) {
+        var key = 'cognitivo_' + est.replace(/\s+/g,'_');
+        if(nombre === key || nombre.startsWith(key)) {
+          var lsKey = 'jb_bin_' + est.replace(/\s+/g,'_');
+          // Solo guardar si no existe o es más reciente
+          if(!localStorage.getItem(lsKey)) {
+            localStorage.setItem(lsKey, b.metadata.id);
+            console.log('Bin encontrado para', est, ':', b.metadata.id);
+          }
+        }
+      });
+    });
+    // Re-renderizar tabla si es admin
+    if(currentStudent === 'Administrador') {
+      setTimeout(function(){ renderAvance(); adminRenderStats(); }, 500);
+    }
+  }).catch(function(e){ console.warn('Error buscando bins:', e); });
+}
 
 function jbHeaders() {
   return {
@@ -4530,19 +4604,81 @@ function jbSetBinId(student, binId) {
 }
 
 // Guardar progreso en JSONBin (async, no bloquea)
+// Bin maestro que guarda los IDs de todos los estudiantes
+var JSONBIN_MASTER_BIN_KEY = 'jb_master_bin_id';
+
+function jbSaveMaster(student, binId) {
+  // Guardar mapping estudiante→binId en bin maestro
+  var masterBinId = localStorage.getItem(JSONBIN_MASTER_BIN_KEY);
+  var mapping = {};
+  try {
+    var raw = localStorage.getItem('jb_master_mapping');
+    if(raw) mapping = JSON.parse(raw);
+  } catch(e) {}
+  mapping[student] = binId;
+  localStorage.setItem('jb_master_mapping', JSON.stringify(mapping));
+
+  if(masterBinId) {
+    fetch(JSONBIN_BASE + '/' + masterBinId, {
+      method: 'PUT',
+      headers: jbHeaders(),
+      body: JSON.stringify(mapping)
+    }).catch(function(){});
+  } else {
+    fetch(JSONBIN_BASE, {
+      method: 'POST',
+      headers: Object.assign({}, jbHeaders(), {
+        'X-Bin-Name': 'cognitivo_MASTER_INDEX',
+        'X-Bin-Private': 'false'
+      }),
+      body: JSON.stringify(mapping)
+    }).then(function(r){ return r.json(); })
+    .then(function(res){
+      if(res && res.metadata && res.metadata.id) {
+        localStorage.setItem(JSONBIN_MASTER_BIN_KEY, res.metadata.id);
+      }
+    }).catch(function(){});
+  }
+}
+
+function jbLoadMaster(callback) {
+  var masterBinId = localStorage.getItem(JSONBIN_MASTER_BIN_KEY);
+  if(!masterBinId) {
+    // Buscar el bin maestro por nombre
+    fetch('https://api.jsonbin.io/v3/b?meta=true', {
+      headers: jbHeaders()
+    }).then(function(r){ return r.json(); })
+    .then(function(bins){
+      if(Array.isArray(bins)) {
+        var master = bins.find(function(b){
+          return b.metadata && b.metadata.name === 'cognitivo_MASTER_INDEX';
+        });
+        if(master) {
+          localStorage.setItem(JSONBIN_MASTER_BIN_KEY, master.metadata.id);
+          jbLoadMaster(callback);
+        } else { callback(null); }
+      } else { callback(null); }
+    }).catch(function(){ callback(null); });
+    return;
+  }
+  fetch(JSONBIN_BASE + '/' + masterBinId, {
+    headers: jbHeaders()
+  }).then(function(r){ return r.json(); })
+  .then(function(data){ callback(data); })
+  .catch(function(){ callback(null); });
+}
+
 function jbSave(student, data) {
   if(!JSONBIN_KEY) return;
   var binId = jbGetBinId(student);
   
   if(binId) {
-    // Actualizar bin existente
     fetch(JSONBIN_BASE + '/' + binId, {
       method: 'PUT',
       headers: jbHeaders(),
       body: JSON.stringify(data)
     }).catch(function(e) { console.warn('JSONBin save error:', e); });
   } else {
-    // Crear nuevo bin
     fetch(JSONBIN_BASE, {
       method: 'POST',
       headers: Object.assign({}, jbHeaders(), {
@@ -4554,6 +4690,7 @@ function jbSave(student, data) {
     .then(function(res) {
       if(res && res.metadata && res.metadata.id) {
         jbSetBinId(student, res.metadata.id);
+        jbSaveMaster(student, res.metadata.id); // Registrar en índice maestro
         console.log('JSONBin creado para', student, ':', res.metadata.id);
       }
     }).catch(function(e) { console.warn('JSONBin create error:', e); });
@@ -5074,6 +5211,7 @@ function appOnload() {
   // Mostrar panel correcto
   setTimeout(function() {
     if(isAdmin) {
+      cargarDatosAdmin(); // Cargar datos de estudiantes desde nube
       showGame(12);
     } else {
       showGame(14);
