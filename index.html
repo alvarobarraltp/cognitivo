@@ -1769,11 +1769,50 @@ function recordStat(game, fields) {
 
 // ======= TABLA DE AVANCE =======
 var _jornadaFilter = 'all';
+
+// Cargar datos de todos los estudiantes desde JSONBin para el admin
+function cargarDatosAdmin() {
+  if(currentStudent !== 'Administrador') return;
+  var estudiantes = ['Miguel Pérez', 'Catalina Vergara', 'Leonel Pradines'];
+  estudiantes.forEach(function(est) {
+    jbLoad(est, function(cloudData) {
+      if(cloudData && typeof cloudData === 'object' && Object.keys(cloudData).length > 0) {
+        // Fusionar con datos locales (nube tiene prioridad)
+        var local = getProgress(est) || {};
+        var merged = Object.assign({}, local);
+        Object.keys(cloudData).forEach(function(k) {
+          if(cloudData[k] !== null && cloudData[k] !== undefined) {
+            if(typeof cloudData[k] === 'object' && typeof merged[k] === 'object' && merged[k] !== null) {
+              // Fusionar objetos conservando máximos
+              Object.keys(cloudData[k]).forEach(function(sk) {
+                if(typeof cloudData[k][sk] === 'number' && typeof merged[k][sk] === 'number') {
+                  merged[k][sk] = Math.max(merged[k][sk], cloudData[k][sk]);
+                } else {
+                  merged[k][sk] = cloudData[k][sk];
+                }
+              });
+            } else {
+              merged[k] = cloudData[k];
+            }
+          }
+        });
+        localStorage.setItem('mem_prog_' + est, JSON.stringify(merged));
+      }
+    });
+  });
+  // Re-renderizar después de cargar
+  setTimeout(function() { renderAvance(); }, 1500);
+}
+
 function renderAvance() {
   var tbody = document.getElementById('avance-tbody');
   if(!tbody) return;
   tbody.innerHTML = '';
-  STUDENTS.forEach(function(st) {
+  // Si es admin, mostrar solo los 3 estudiantes (no al admin mismo)
+  var lista = currentStudent === 'Administrador'
+    ? ['Miguel Pérez', 'Catalina Vergara', 'Leonel Pradines']
+    : STUDENTS.filter(function(s){ return s !== 'Administrador'; });
+  lista.forEach(function(st) {
     var p = getProgress(st);
     var g1d = p.g1 || {}; var g2d = p.g2 || {}; var g3d = p.g3 || {};
     var g4d = p.g4 || {}; var g5d = p.g5 || {};
@@ -1912,9 +1951,9 @@ function showGame(n) {
     if(m && parseInt(m[1])===n) t.classList.add('active');
     else t.classList.remove('active');
   });
-  if(n===6) { try{ renderAvance(); }catch(e){} }
+  if(n===6) { try{ renderAvance(); if(currentStudent==='Administrador') cargarDatosAdmin(); }catch(e){} }
   if(n===7) { ryrInitDone=true; try{ ryrShowInstruction(); }catch(e){} }
-  if(n===12) { try{ adminRenderStats(); }catch(e){} }
+  if(n===12) { try{ adminRenderStats(); cargarDatosAdmin(); }catch(e){} }
   if(n===13) { try{ adminRenderList(); }catch(e){} }
   if(n===14) { try{ renderPanelInicio(currentStudent||null); }catch(e){ console.error('renderPanelInicio error:',e); } }
   if(n>=1 && n<=5 && currentStudent) {
@@ -3508,8 +3547,11 @@ function ryrLoadProgress(){
 // ═══════════════════════════════════════════════════════════
 // JUEGO 8 — CONTROL INHIBITORIO (STROOP)
 // ═══════════════════════════════════════════════════════════
-var G8_COLORES_EXTRA = ['MORADO','ROSADO','NARANJA','CELESTE'];
-var G8_COLORES_HEX_EXTRA = {'MORADO':'#A78BFA','ROSADO':'#F472B6','NARANJA':'#FB923C','CELESTE':'#67E8F9'};
+var G8_COLORES_EXTRA = ['MORADO','ROSADO','NARANJA','CELESTE','CAFÉ','LILA','TURQUESA','DORADO'];
+var G8_COLORES_HEX_EXTRA = {
+  'MORADO':'#A78BFA','ROSADO':'#F472B6','NARANJA':'#FB923C','CELESTE':'#67E8F9',
+  'CAFÉ':'#92400E','LILA':'#C084FC','TURQUESA':'#2DD4BF','DORADO':'#F59E0B'
+};
 var G8 = {
   palabrasBase: ['ROJO','AZUL','VERDE','AMARILLO'],
   coloresBase:  {'ROJO':'#F87171','AZUL':'#38BDF8','VERDE':'#4ADE80','AMARILLO':'#FCD34D'},
@@ -3519,13 +3561,14 @@ var G8 = {
   timerInterval:null, timerSec:10, timerMax:10,
   etapaOk:0,       // correctas en etapa actual
   etapaNeed:5,      // necesita N correctas para pasar etapa
-  nivelExtra:0      // cuántos colores extra agregados (0,1,2,3,4)
+  nivelExtra:0,     // cuántos colores extra agregados
+  modoIngles:false  // modo bilingüe activado
 };
 function g8GetEtapaLabel(){ return 'Etapa: '+G8.timerMax+'s ('+G8.etapaOk+'/'+G8.etapaNeed+')'; }
 function g8Init() {
   if(!requireStudent()) return;
   clearInterval(G8.timerInterval);
-  G8.ok=0; G8.err=0; G8.racha=0; G8.activo=true; G8.timerMax=10; G8.etapaOk=0; G8.nivelExtra=0;
+  G8.ok=0; G8.err=0; G8.racha=0; G8.activo=true; G8.timerMax=10; G8.etapaOk=0; G8.nivelExtra=0; G8.modoIngles=false; G8.etapaNeed=5;
   G8.palabras=G8.palabrasBase.slice(); G8.colores=Object.assign({},G8.coloresBase);
   document.getElementById('g8-ok').textContent='0';
   document.getElementById('g8-err').textContent='0';
@@ -3603,16 +3646,38 @@ function g8Resp(resp) {
         celebrarPasoOk('¡Etapa superada!', 'Ahora tienes ' + G8.timerMax + ' segundos para responder. ¡Más rápido!');
         soundMostrar(3);
       } else {
-        // Ya en 4s — subir nivel: agregar colores
+        // Ya en 4s — subir nivel
         if(G8.nivelExtra < G8_COLORES_EXTRA.length) {
+          // Agregar nuevo color
           var nc = G8_COLORES_EXTRA[G8.nivelExtra];
           G8.palabras.push(nc);
           G8.colores[nc] = G8_COLORES_HEX_EXTRA[nc];
           G8.nivelExtra++;
+          G8.timerMax = 10;
+          celebrarLogro('🏆 ¡Nuevo color desbloqueado!',
+            '¡' + currentStudent.split(' ')[0] + ' ahora juega con ' + G8.palabras.length + ' colores! Tiempo: 10s');
+          soundMostrar(4);
+        } else {
+          // Todos los colores agregados → reducir etapaNeed (más exigente)
+          G8.etapaNeed = Math.max(3, G8.etapaNeed - 1);
+          G8.timerMax = 10;
+          // Agregar variante: mezclar colores en INGLÉS como trampa extra
+          if(!G8.modoIngles) {
+            G8.modoIngles = true;
+            var ingles = ['RED','BLUE','GREEN','YELLOW','PURPLE','PINK','ORANGE'];
+            var colEng  = {'RED':'#F87171','BLUE':'#38BDF8','GREEN':'#4ADE80',
+                          'YELLOW':'#FCD34D','PURPLE':'#A78BFA','PINK':'#F472B6','ORANGE':'#FB923C'};
+            ingles.forEach(function(w){ G8.palabras.push(w); G8.colores[w]=colEng[w]; });
+            celebrarLogro('🌍 ¡Modo Bilingüe activado!',
+              '¡' + currentStudent.split(' ')[0] + ' ahora enfrenta colores en español e inglés! Necesitas '+G8.etapaNeed+' aciertos por etapa.');
+          } else {
+            // Ya todo desbloqueado — reducir tiempo mínimo
+            G8.etapaNeed = Math.max(2, G8.etapaNeed - 1);
+            celebrarLogro('⚡ ¡Modo Élite!',
+              '¡' + currentStudent.split(' ')[0] + ' necesita solo '+G8.etapaNeed+' aciertos por etapa. ¡Maestro del color!');
+          }
+          soundMostrar(4);
         }
-        G8.timerMax = 10;
-        celebrarLogro('¡Nivel máximo de velocidad!', '¡' + currentStudent.split(' ')[0] + ' ahora juega con ' + G8.palabras.length + ' colores desde 10 segundos!');
-        soundMostrar(4);
       }
     }
     setTimeout(g8Siguiente, 600);
