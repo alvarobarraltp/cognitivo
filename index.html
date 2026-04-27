@@ -1640,13 +1640,18 @@ function getProgress(student) {
   try { return JSON.parse(localStorage.getItem(key)) || {}; } catch(e){ return {}; }
 }
 function saveProgress(student, data) {
+  if(!student) { console.warn('saveProgress: sin estudiante'); return; }
   var key = 'mem_prog_' + student;
   var now = new Date();
   data.lastSeen = now.toLocaleDateString('es-CL', {day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});
   data.lastTs = now.getTime();
-  localStorage.setItem(key, JSON.stringify(data));
-  snapshotJornada(student, data, now);
-  renderAvance();
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch(e) { console.error('saveProgress localStorage error:', e); }
+  // Sincronizar con JSONBin (nube)
+  try { if(typeof jbSave === 'function') jbSave(student, data); } catch(e){}
+  try { snapshotJornada(student, data, now); } catch(e){}
+  try { renderAvance(); } catch(e){}
 }
 
 function snapshotJornada(student, data, now) {
@@ -1721,11 +1726,31 @@ function clearJornadas() {
   renderJornadas('all');
 }
 function recordStat(game, fields) {
-  if(!currentStudent) return;
-  var p = getProgress(currentStudent);
-  if(!p[game]) p[game] = {};
-  Object.assign(p[game], fields);
-  saveProgress(currentStudent, p);
+  if(!currentStudent) {
+    console.warn('recordStat: sin estudiante activo');
+    return;
+  }
+  try {
+    var p = getProgress(currentStudent);
+    if(!p[game]) p[game] = {};
+    // Fusionar conservando máximos numéricos
+    Object.keys(fields).forEach(function(k) {
+      var v = fields[k];
+      if(typeof v === 'number' && typeof p[game][k] === 'number') {
+        // Para pts, nivel, niv → conservar el mayor
+        if(['pts','nivel','niv','bestRacha','bestMoves','digs','rnd'].indexOf(k) >= 0) {
+          p[game][k] = Math.max(p[game][k], v);
+        } else {
+          p[game][k] = v;
+        }
+      } else {
+        p[game][k] = v;
+      }
+    });
+    saveProgress(currentStudent, p);
+  } catch(e) {
+    console.error('recordStat error:', e);
+  }
 }
 
 // ======= TABLA DE AVANCE =======
@@ -2225,13 +2250,7 @@ function hideFb(id) { document.getElementById(id).className = 'feedback'; }
 var g1NombresColor = ['Azul', 'Verde', 'Rojo', 'Amarillo'];
 function decirColor(nombre) {
   try {
-    window.speechSynthesis.cancel();
-    var u = new SpeechSynthesisUtterance(nombre);
-    u.lang = 'es-CL';
-    u.rate = 0.95;
-    u.pitch = 1.1;
-    u.volume = 1;
-    window.speechSynthesis.speak(u);
+    // voz eliminada
   } catch(e){}
 }
 
@@ -2486,8 +2505,11 @@ function g3Start() {
   hideFb('g3-fb');
   document.getElementById('g3-choose').style.display = 'none';
   var g3Rondas = g3GetRondasConfig();
-  if(g3.rnd >= g3Rondas.length) g3.rnd = 0;
-  var n = g3Rondas[g3.rnd];
+  // Avanzar siempre - si superó todas las rondas, aumentar dificultad
+  if(g3.rnd >= g3Rondas.length) {
+    g3.rnd = g3Rondas.length - 1; // quedarse en la más difícil
+  }
+  var n = g3Rondas[Math.min(g3.rnd, g3Rondas.length-1)];
   var shuffled = g3Banco.slice().sort(function(){ return Math.random()-0.5; });
   g3.seq = shuffled.slice(0, n);
   g3.answer = [];
@@ -2505,10 +2527,7 @@ function g3Start() {
         soundMostrar(i);  // ping al mostrar cada imagen
         // También decir el nombre en voz alta
         try {
-          window.speechSynthesis.cancel();
-          var u = new SpeechSynthesisUtterance(item.nombre);
-          u.lang = 'es-CL'; u.rate = 0.9; u.pitch = 1.1;
-          window.speechSynthesis.speak(u);
+          // voz eliminada
         } catch(e){}
         i++;
         setTimeout(show, 1100);
@@ -2613,7 +2632,7 @@ function g3Check() {
     setFb('g3-fb', '¡Orden perfecto! +' + g3.seq.length*20 + ' puntos.', 'ok');
     document.getElementById('g3-choose').style.display = 'none';
     var _stu3 = currentStudent;
-    document.getElementById('g3-btn').textContent = g3.rnd>=g3Rondas.length ? '↩ Reiniciar' : '▶ Siguiente ronda';
+    document.getElementById('g3-btn').textContent = '▶ Siguiente ronda';
     document.getElementById('g3-btn').style.display = 'inline-block';
     document.getElementById('g3-btn').onclick = function(){ continuarConEstudiante(_stu3, g3Start); };
   } else {
@@ -2726,7 +2745,7 @@ function g4Flip(id) {
         var objetivo = cfg.objetivo;
         var msg = '¡Completaste '+g4.pares+' pares en '+g4.moves+' movimientos!';
         var newNivel = nivelIdx;
-        if(cx.g4Levels && g4.moves <= objetivo && nivelIdx < G4_NIVEL_CONFIG.length-1) {
+        if(cx.g4Levels && nivelIdx < G4_NIVEL_CONFIG.length-1) {
           // Superó el objetivo → sube de nivel
           newNivel = nivelIdx + 1;
           msg += ' 🎉 ¡Subiste al ' + G4_NIVEL_CONFIG[newNivel].label + '!';
@@ -2734,7 +2753,7 @@ function g4Flip(id) {
           // Nivel máximo
           msg += ' 🏆 ¡Nivel máximo alcanzado!';
         } else if(cx.g4Levels) {
-          msg += ' (Objetivo: ≤'+objetivo+' mov. para subir · tú usaste '+g4.moves+')';
+          // siempre sube de nivel al completar
         }
         recordStat('g4', {bestMoves:bm, games:games, pts:g4.pts, g4nivel:newNivel});
         var _stu4 = currentStudent;
@@ -3021,7 +3040,7 @@ function ryrShuffle2(a){
 }
 function ryrSpk(txt){
   if(!ryrS.neep.voice) return;
-  try{ window.speechSynthesis.cancel(); var u=new SpeechSynthesisUtterance(txt); u.lang='es-CL'; u.rate=0.9; window.speechSynthesis.speak(u); }catch(e){}
+  try{ /* sin voz */ }catch(e){}
 }
 function ryrSnd(ok){
   try{
@@ -3846,9 +3865,11 @@ function g10Resp(resp) {
     document.getElementById('g10-ok').textContent=G10.ok;
     // Guardar progreso
     if(currentStudent) {
-      var prog = getProgress(currentStudent);
-      prog.g10ok = (prog.g10ok || 0) + 1;
-      saveProgress(currentStudent, prog);
+      try {
+        var prog = getProgress(currentStudent);
+        prog.g10ok = (prog.g10ok || 0) + 1;
+        saveProgress(currentStudent, prog);
+      } catch(e) { console.error('g10ok save error:', e); }
     }
     adaptRegistrarAcierto('g10');
     soundBien();
@@ -3873,9 +3894,11 @@ function g10Resp(resp) {
     G10.err++;
     document.getElementById('g10-err').textContent=G10.err;
     if(currentStudent) {
-      var prog = getProgress(currentStudent);
-      prog.g10err = (prog.g10err || 0) + 1;
-      saveProgress(currentStudent, prog);
+      try {
+        var prog = getProgress(currentStudent);
+        prog.g10err = (prog.g10err || 0) + 1;
+        saveProgress(currentStudent, prog);
+      } catch(e) { console.error('g10err save error:', e); }
     }
     G10.activo=false;
     adaptRegistrarError('g10');
@@ -4022,9 +4045,11 @@ function g11Resp(resp) {
     G11.err++;
     document.getElementById('g11-err').textContent=G11.err;
     if(currentStudent) {
-      var prog = getProgress(currentStudent);
-      prog.g11err = (prog.g11err || 0) + 1;
-      saveProgress(currentStudent, prog);
+      try {
+        var prog = getProgress(currentStudent);
+        prog.g11err = (prog.g11err || 0) + 1;
+        saveProgress(currentStudent, prog);
+      } catch(e) { console.error('g11err save error:', e); }
     }
     G11.activo=false;
     G11.hist.push(false);
@@ -4204,46 +4229,114 @@ function adminMostrar() {
 }
 
 function adminRenderStats() {
-  var html = '<div style="margin-bottom:2rem;">';
-  
-  // Tarjetas resumen
-  html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:2rem;">';
+  var el = document.getElementById('admin-stats-container');
+  if(!el) return;
+
+  var JUEGOS_ADMIN = [
+    {key:'g1', label:'🎨 Colores',    sub:'pts',  ex:'nivel'},
+    {key:'g2', label:'🔢 Números',    sub:'pts',  ex:'digs'},
+    {key:'g3', label:'🖼️ Imágenes',   sub:'pts',  ex:'rnd'},
+    {key:'g4', label:'🃏 Pares',      sub:'pts',  ex:'games'},
+    {key:'g5', label:'🔗 Cadena',     sub:'pts',  ex:'niv'},
+    {key:'ryr',label:'🧩 RyR',       sub:'pts',  ex:'nivel'},
+    {key:'g8ok',label:'🛑 Inhibición',sub:null,  ex:null},
+    {key:'g9ok',label:'📋 Plan',      sub:null,  ex:null},
+    {key:'g10ok',label:'🔀 Flex',     sub:null,  ex:null},
+    {key:'g11ok',label:'↔️ Alterna',  sub:null,  ex:null}
+  ];
+
+  function getVal(prog, j) {
+    if(j.sub === null) return prog[j.key] || 0;
+    var obj = prog[j.key];
+    return obj ? (obj[j.sub] || 0) : 0;
+  }
+  function getEx(prog, j) {
+    if(!j.ex || j.sub === null) return '';
+    var obj = prog[j.key];
+    if(!obj || !obj[j.ex]) return '';
+    var v = obj[j.ex];
+    if(j.ex==='nivel'||j.ex==='niv') return 'Niv.'+v;
+    if(j.ex==='digs') return v+'díg.';
+    if(j.ex==='rnd') return 'Rda.'+v;
+    if(j.ex==='games') return v+'p.';
+    return v;
+  }
+
+  var html = '';
+
+  // ── Tarjetas resumen por estudiante ──
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:2rem;">';
   ADMIN_ESTUDIANTES.forEach(function(est) {
     var prog = getProgress(est) || {};
-    var totalOk = 0;
-    [1,2,3,4,5,7,8,9,10,11].forEach(function(g) { totalOk += (prog['g'+g+'ok'] || 0); });
-    html += '<div style="background:var(--surface2);border:1.5px solid var(--morado);border-radius:12px;padding:1rem;text-align:center;">';
+    var totalPts = 0, iniciados = 0;
+    JUEGOS_ADMIN.forEach(function(j) {
+      var v = getVal(prog, j);
+      totalPts += v;
+      if(v > 0) iniciados++;
+    });
+    var color = iniciados >= 7 ? 'var(--verde)' : iniciados >= 4 ? 'var(--azul)' : 'var(--texto2)';
+    html += '<div style="background:var(--surface2);border:1.5px solid '+color+';border-radius:14px;padding:1.2rem;text-align:center;">';
+    html += '<div style="font-size:1.8rem;margin-bottom:0.3rem;">'+
+      (est.includes('Miguel')?'🐶':est.includes('Catalina')?'🐱':'🧑‍🎓')+'</div>';
     html += '<div style="font-weight:800;color:var(--azul);margin-bottom:0.5rem;">'+est.split(' ')[0]+'</div>';
-    html += '<div style="font-size:0.85rem;color:var(--verde);">Aciertos: '+totalOk+'</div>';
-    html += '<div style="font-size:0.85rem;color:var(--texto2);">Puntos: '+(prog.totalPts || 0)+'</div>';
+    html += '<div style="font-size:1.4rem;font-weight:800;color:var(--verde);">'+totalPts+'<span style="font-size:0.8rem;color:var(--texto2);"> pts</span></div>';
+    html += '<div style="font-size:0.78rem;color:var(--texto2);">'+iniciados+'/10 ejercicios</div>';
+    html += '<div style="font-size:0.72rem;color:var(--texto2);margin-top:4px;">'+(prog.lastSeen||'Sin sesión')+'</div>';
     html += '</div>';
   });
   html += '</div>';
-  
-  // Tabla comparativa
-  html += '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;background:var(--surface2);border-radius:12px;overflow:hidden;">';
-  html += '<tr style="background:var(--surface);border-bottom:2px solid var(--border);"><th style="text-align:left;padding:10px;color:var(--azul);">Estudiante</th>';
-  [1,2,3,4,5,7,8,9,10,11].forEach(function(g) {
-    var nom = LISTA_JUEGOS[g].split(' ')[0];
-    html += '<th style="text-align:center;padding:8px;font-size:0.75rem;color:var(--texto2);">'+nom+'</th>';
+
+  // ── Tabla comparativa detallada ──
+  html += '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:0.82rem;">';
+  html += '<tr style="background:var(--surface);border-bottom:2px solid var(--border);">';
+  html += '<th style="text-align:left;padding:8px;color:var(--texto2);">Ejercicio</th>';
+  ADMIN_ESTUDIANTES.forEach(function(est) {
+    html += '<th style="text-align:center;padding:8px;color:var(--azul);">'+est.split(' ')[0]+'</th>';
   });
   html += '</tr>';
-  
-  ADMIN_ESTUDIANTES.forEach(function(est) {
-    var prog = getProgress(est) || {};
-    html += '<tr style="border-bottom:1px solid var(--border);"><td style="padding:10px;color:var(--azul);font-weight:700;">'+est.split(' ')[0]+'</td>';
-    [1,2,3,4,5,7,8,9,10,11].forEach(function(g) {
-      var ok = prog['g'+g+'ok'] || 0;
-      var color = ok > 0 ? 'var(--verde)' : 'var(--texto2)';
-      html += '<td style="text-align:center;padding:8px;color:'+color+';">'+ok+'</td>';
+
+  JUEGOS_ADMIN.forEach(function(j) {
+    html += '<tr style="border-bottom:1px solid var(--border);">';
+    html += '<td style="padding:8px;color:var(--texto);">'+j.label+'</td>';
+    ADMIN_ESTUDIANTES.forEach(function(est) {
+      var prog = getProgress(est) || {};
+      var v  = getVal(prog, j);
+      var ex = getEx(prog, j);
+      var color = v > 0 ? 'var(--verde)' : 'var(--texto2)';
+      html += '<td style="text-align:center;padding:8px;">';
+      html += '<span style="color:'+color+';font-weight:700;">'+(v||'—')+'</span>';
+      if(ex) html += '<br><span style="font-size:0.72rem;color:var(--texto2);">'+ex+'</span>';
+      html += '</td>';
     });
     html += '</tr>';
   });
-  
   html += '</table></div>';
-  html += '</div>';
-  
-  document.getElementById('admin-stats-container').innerHTML = html;
+
+  // ── Botón reiniciar por estudiante ──
+  html += '<div style="margin-top:1.5rem;">';
+  html += '<div style="font-weight:800;color:var(--texto);margin-bottom:0.8rem;">⚙️ Gestión</div>';
+  html += '<div style="display:flex;gap:10px;flex-wrap:wrap;">';
+  ADMIN_ESTUDIANTES.forEach(function(est) {
+    html += '<button style="padding:8px 14px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;color:var(--texto);cursor:pointer;font-size:0.85rem;" '+
+      'onclick="adminVerEstudiante(this.dataset.est)" data-est="'+est+'">👁 '+est.split(' ')[0]+'</button>';
+  });
+  html += '</div></div>';
+
+  el.innerHTML = html;
+  // Agregar listeners
+  setTimeout(function(){
+    document.querySelectorAll('[data-est]').forEach(function(btn){
+      btn.onclick = function(){ adminVerEstudiante(this.dataset.est); };
+    });
+  }, 0);
+}
+
+function adminVerEstudiante(est) {
+  var prog = getProgress(est) || {};
+  var info = JSON.stringify(prog, null, 2);
+  var w = window.open('', '_blank', 'width=600,height=500');
+  w.document.write('<pre style="font-family:monospace;padding:1rem;background:#0F172A;color:#4ADE80;">'+
+    '<b style="color:#38BDF8;">'+est+'</b>\n\n'+info+'</pre>');
 }
 
 function adminRenderList() {
