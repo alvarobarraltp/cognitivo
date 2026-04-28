@@ -1863,6 +1863,12 @@ function renderAvance() {
       var pct = Math.min(100, Math.round((pts||0)/maxPts*100));
       return '<div class="pts-bar-wrap"><div class="pts-bar" style="width:'+pct+'%"></div></div>';
     };
+    // Celdas g8-g11
+    function fnBadge(val, color) {
+      if(!val) return '<span class="nivel-badge nb-0">—</span>';
+      var cls = val>=20?'nb-3':val>=10?'nb-2':val>=3?'nb-1':'nb-0';
+      return '<span class="nivel-badge '+cls+'">'+val+' ✓</span>';
+    }
     tbody.innerHTML += '<tr>' +
       '<td>' + st + (st===currentStudent ? ' <span style="font-size:0.75rem;background:var(--azul);color:white;padding:1px 7px;border-radius:10px;">activo</span>' : '') + '</td>' +
       '<td><span class="nivel-badge ' + nivelClass(g1d.nivel,20) + '">Niv. ' + (g1d.nivel||1) + '</span><br>' + ptsBar(g1d.pts) + '<br><small>' + (g1d.pts||0) + ' pts</small></td>' +
@@ -1871,6 +1877,10 @@ function renderAvance() {
       '<td>' + (g4d.bestMoves ? '<span class="nivel-badge nb-3">'+g4d.bestMoves+' mov.</span>' : '<span class="nivel-badge nb-0">—</span>') + '<br><small>' + G4_NIVEL_CONFIG[Math.min(g4d.g4nivel||0,G4_NIVEL_CONFIG.length-1)].label + '</small><br><small>' + (g4d.games||0) + ' partidas</small></td>' +
       '<td><span class="nivel-badge ' + nivelClass(g5d.niv,15) + '">Niv. ' + (g5d.niv||1) + '</span><br><small>Racha: ' + (g5d.bestRacha||0) + '</small></td>' +
       '<td>' + (p.ryr ? '<span class="nivel-badge '+(p.ryr.nivel>=10?'nb-3':p.ryr.nivel>=6?'nb-2':'nb-1')+'">Niv. '+(p.ryr.nivel||3)+'</span><br><small>'+(p.ryr.pts||0)+' pts</small>' : '<span class="nivel-badge nb-0">—</span>') + '</td>' +
+      '<td style="text-align:center;">' + fnBadge(p.g8ok) + (p.g8err ? '<br><small style="color:var(--rojo);">'+p.g8err+' err</small>' : '') + '</td>' +
+      '<td style="text-align:center;">' + fnBadge(p.g9ok) + (p.g9err ? '<br><small style="color:var(--rojo);">'+p.g9err+' err</small>' : '') + '</td>' +
+      '<td style="text-align:center;">' + fnBadge(p.g10ok) + (p.g10err ? '<br><small style="color:var(--rojo);">'+p.g10err+' err</small>' : '') + '</td>' +
+      '<td style="text-align:center;">' + fnBadge(p.g11ok) + (p.g11err ? '<br><small style="color:var(--rojo);">'+p.g11err+' err</small>' : '') + '</td>' +
       '<td class="last-played">' + (p.lastSeen || '—') + '</td>' +
     '</tr>';
   });
